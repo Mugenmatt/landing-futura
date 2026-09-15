@@ -24,7 +24,7 @@ Visitor enters a single responsive page (mobile-first, tablet/desktop) in a brow
 
 ## Capabilities and Constraints
 
-- Capabilities: product catalog with client-side search + category filter; per-card decorative "AGREGAR AL CARRITO" state (~2 s, no cart/backend); SVG data viz (donut, line, bars) hand-drawn; sticky Product Showcase of BRAZO_AUMENTADO_V4 with scroll progress; animated stat counters; hero with layered SVG parallax; emergency/contact CTAs.
+- Capabilities: product catalog with client-side search (name, category, description, specs) + category filter; per-card "AÑADIR A COTIZACIÓN" writing to an in-session quote list (visible "SESIÓN DE COTIZACIÓN" panel, remove per item, aria-live announcements, mailto CTA with prefilled subject; no backend or persistence); SVG data viz (donut, line, bars) hand-drawn; sticky Product Showcase of BRAZO_AUMENTADO_V4 with scroll progress; animated stat counters; hero with layered SVG parallax; emergency/contact CTAs.
 - Stack is fixed and not to expand without justification: React + TypeScript + Vite; modern CSS with custom properties; no UI/anim/chart/deps-new libraries unless CSS/SVG/Canvas provably can't cover it (see ARCHITECTURE.md). No three.js: hero is SVG + CSS parallax.
 - Constraints: copy must come from CONTENT.md (edit there first); 4 neon accents have fixed roles (cyan=action, pink=alert, violet=selection/categories, green=positive); never all 4 in one component; uppercase UI labels; no arrow "→" flourishes, no "·" separators, no repeated fade-up reveals; Spanish copy.
 - Terminology: product nomenclatures are uppercase system codes (e.g. BRAZO_AUMENTADO_V4).
