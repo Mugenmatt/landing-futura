@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { brand, nav } from '../../content/content'
+import StatusPill from '../ui/StatusPill'
+import { BionicHandIcon, UserIcon } from '../ui/icons'
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -20,21 +22,19 @@ function Navbar() {
   }, [])
 
   return (
-    <header className={`site-header${scrolled ? ' is-scrolled' : ''}`}>
+    <header className={`site-header${scrolled ? ' is-scrolled' : ''}`} id="top">
       <div className="site-nav">
-        <a className="nav-brand" href="/">
+        <a className="nav-brand" href="#top">
+          <BionicHandIcon />
           {brand.name}
         </a>
-        <ul className="nav-links">
-          {nav.links.map((link) => (
-            <li key={link.href}>
-              <a href={link.href}>{link.label}</a>
-            </li>
-          ))}
-        </ul>
-        <a className="nav-cta" href={nav.cta.href}>
-          {nav.cta.label}
+        <StatusPill label={nav.status} />
+        <a className="nav-cta" href={nav.href}>
+          {nav.cta}
         </a>
+        <span className="nav-user" aria-hidden="true">
+          <UserIcon />
+        </span>
       </div>
     </header>
   )

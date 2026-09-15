@@ -21,8 +21,18 @@
 }
 
 .hero-sub {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-primary);
+}
+
+.hero-body-copy {
   color: var(--text-secondary);
-  font-size: var(--text-body);
+  max-width: var(--measure);
+  margin-top: 1rem;
 }
 
 .hero-actions {

@@ -14,6 +14,7 @@ function Hero() {
           {post}
         </h1>
         <p className="hero-sub">{hero.subheadline}</p>
+        <p className="hero-body-copy">{hero.body}</p>
         <div className="hero-actions">
           <Button variant="primary" href={hero.primaryCta.href}>
             {hero.primaryCta.label}
