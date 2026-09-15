@@ -1,7 +1,6 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 
 export const DRACO_PATH = `${import.meta.env.BASE_URL}models3D/draco/`
 export const MODEL_FIT_SIZE = 3
@@ -41,7 +40,6 @@ const NEUTRAL_FOV = 38
 
 type GpuView = {
   renderer: THREE.WebGLRenderer
-  env: THREE.Texture
   owner: ModelView | null
 }
 
@@ -73,35 +71,34 @@ class Engine {
     return this.gltf
   }
 
-  private acquireGpu(): GpuView {
+  private acquireGpu(canvas: HTMLCanvasElement): GpuView {
     for (const gpu of this.gpus) {
-      if (!gpu.owner) return gpu
+      if (!gpu.owner && gpu.renderer.domElement === canvas) return gpu
     }
-    const gpu = this.createGpu()
+    const gpu = this.createGpu(canvas)
     this.gpus.push(gpu)
     return gpu
   }
 
-  private createGpu(): GpuView {
+  private createGpu(canvas: HTMLCanvasElement): GpuView {
     const renderer = new THREE.WebGLRenderer({
+      canvas,
       antialias: true,
       alpha: true,
+      /* Sin tone mapping ACES ni entorno IBL (PMREM): en implementaciones
+         WebGL por software (SwiftShader) ambos degradan el buffer a negro o
+         blanco total. La luz de estudio directa sale bien en todo contexto y
+         no paga el costo de generar el envMap por contexto. */
       powerPreference: 'high-performance',
     })
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.toneMapping = THREE.ACESFilmicToneMapping
-    renderer.toneMappingExposure = 1.1
-    const pmrem = new THREE.PMREMGenerator(renderer)
-    const env = pmrem.fromScene(new RoomEnvironment()).texture
-    pmrem.dispose()
-    return { renderer, env, owner: null }
+    return { renderer, owner: null }
   }
 
   requestView(opts: ModelViewOpts) {
     if (this.views.size >= MAX_VIEWS) return null
     const view = new ModelView(opts)
-    view.gpu = this.acquireGpu()
-    view.scene.environment = view.gpu.env
+    view.gpu = this.acquireGpu(opts.canvas)
     this.views.add(view)
     this.ensureLoop()
     return view
@@ -111,6 +108,14 @@ class Engine {
     if (!this.views.has(view)) return
     this.views.delete(view)
     view.teardown()
+    const gpu = view.gpu
+    if (gpu) {
+      /* El renderer quedó ligado al canvas de esta vista (ver createGpu):
+         liberar el contexto WebGL al soltar la vista para no agotar límites. */
+      gpu.renderer.dispose()
+      gpu.renderer.forceContextLoss()
+      this.gpus = this.gpus.filter((g) => g !== gpu)
+    }
     if (this.views.size === 0) this.stopLoop()
   }
 
@@ -127,19 +132,22 @@ class Engine {
     return pending
   }
 
-  private normalize(group: THREE.Group) {
+  private normalize(group: THREE.Group): THREE.Group {
     const box = new THREE.Box3().setFromObject(group)
     const size = box.getSize(new THREE.Vector3())
     const maxDim = Math.max(size.x, size.y, size.z) || 1
     const center = box.getCenter(new THREE.Vector3())
     const scale = MODEL_FIT_SIZE / maxDim
-    const matrix = new THREE.Matrix4().compose(
-      center.multiplyScalar(-1),
-      new THREE.Quaternion(),
-      new THREE.Vector3(scale, scale, scale),
-    )
-    group.applyMatrix4(matrix)
-    return group
+    /* Wrapper contenedor: los GLB traen transformaciones propias en sus
+       nodos internos; aplicar la compensación al ROOT no garantiza el
+       centrado world. Envolver el árbol garantiza que el bbox del wrapper
+       (matriz identity) quede centrado y con el tamaño de encaje. */
+    const wrapper = new THREE.Group()
+    wrapper.add(group)
+    wrapper.position.set(-center.x, -center.y, -center.z)
+    wrapper.scale.setScalar(scale)
+    wrapper.updateMatrix()
+    return wrapper
   }
 
   private ensureLoop() {
@@ -149,7 +157,16 @@ class Engine {
       this.rafId = requestAnimationFrame(tick)
       const dt = Math.min((now - this.last) / 1000, 0.05)
       this.last = now
-      for (const view of this.views) view.update(dt)
+      for (const view of this.views) {
+        try {
+          view.update(dt)
+        } catch (err) {
+          if (!view.renderErrorReported) {
+            view.renderErrorReported = true
+            console.error('[neo-viewer] error renderizando la vista:', err)
+          }
+        }
+      }
     }
     this.rafId = requestAnimationFrame(tick)
   }
@@ -190,6 +207,7 @@ export class ModelView {
   private polarActive = false
   private ro: ResizeObserver | null = null
   gpu: GpuView | null = null
+  renderErrorReported = false
 
   constructor(opts: ModelViewOpts) {
     this.opts = opts
@@ -201,9 +219,27 @@ export class ModelView {
       typeof window !== 'undefined' &&
       window.matchMedia('(pointer: fine)').matches
     this.scene.add(this.group)
+    this.addStudioLights()
     if (opts.mode === 'static') this.autoRotateOn = false
     this.bindEvents()
     this.scheduleResize()
+  }
+
+  /**
+   * Luz de estudio neutra por escena: el `scene.environment` (IBL) da el
+   * realismo premium cuando WebGL corre en GPU, pero con implementaciones
+   * por software (SwiftShader o fallbacks) no ilumina nada y los modelos
+   * salen negros. Las luces directas garantizan visibilidad en todo contexto.
+   */
+  private addStudioLights() {
+    const ambient = new THREE.AmbientLight(0xffffff, 0.55)
+    this.scene.add(ambient)
+    const key = new THREE.DirectionalLight(0xffffff, 1.15)
+    key.position.set(3, 5, 4)
+    this.scene.add(key)
+    const rim = new THREE.DirectionalLight(0xffffff, 0.45)
+    rim.position.set(-4, 2, -3)
+    this.scene.add(rim)
   }
 
   private bindEvents() {
@@ -402,5 +438,6 @@ export class ModelView {
       if (Array.isArray(material)) material.forEach((m) => m.dispose())
       else material.dispose()
     }
+    this.scene.clear()
   }
 }
