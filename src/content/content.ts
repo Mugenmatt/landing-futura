@@ -3,18 +3,28 @@ export type Link = {
   href: string
 }
 
-export type ProductSpec = string
+export type CatalogCategory = 'MIEMBROS' | 'ORGANOS' | 'ESPINAL'
 
-export type Product = {
+export type CatalogProduct = {
   id: string
-  kind: string
+  category: CatalogCategory
   name: string
   description: string
-  specs: ProductSpec[]
-  cta: Link
+  specs: string[]
 }
 
-export type Pillar = {
+export type ChartSegment = {
+  label: string
+  value: number
+  className: string
+}
+
+export type MetricBar = {
+  label: string
+  value: number
+}
+
+type Pillar = {
   name: string
   description: string
 }
@@ -28,27 +38,119 @@ export type Stat = {
 }
 
 export const brand = {
-  name: 'NEXUS',
-  tagline: 'Ingeniería biomecánica para el cuerpo humano.',
+  name: 'NEO-CYBERNETICS',
 }
 
 export const nav = {
-  links: [
-    { label: 'Tecnología', href: '#tecnologia' },
-    { label: 'Productos', href: '#productos' },
-    { label: 'Ingeniería', href: '#ingenieria' },
-    { label: 'Nosotros', href: '#nosotros' },
-  ] satisfies Link[],
-  cta: { label: 'Explorar tecnología', href: '#tecnologia' } satisfies Link,
+  status: 'ESTADO DEL SISTEMA — ENLACE NEURAL: ESTABLE',
+  cta: 'ESTADO DEL SISTEMA',
+  href: '#catalogo',
 }
 
 export const hero = {
-  headline: 'El cuerpo, versión siguiente.',
-  highlight: 'versión',
-  subheadline:
-    'NEXUS diseña e integra prótesis y componentes biomecánicos de precisión — brazos, piernas y sistemas visuales construidos para funcionar como parte del cuerpo, no encima de él.',
-  primaryCta: { label: 'Explorar tecnología', href: '#tecnologia' } satisfies Link,
-  secondaryCta: { label: 'Ver productos', href: '#productos' } satisfies Link,
+  headline: 'RECUPERA TUS LÍMITES.',
+  highlight: 'LÍMITES.',
+  subheadline: 'TU CUERPO, EVOLUCIONADO.',
+  body: 'Reemplazos mecánicos de grado militar. Integración biológica garantizada.',
+  primaryCta: { label: 'VER CATÁLOGO', href: '#catalogo' } satisfies Link,
+  secondaryCta: { label: 'SOLICITAR DIAGNÓSTICO', href: '#contacto' } satisfies Link,
+}
+
+export const catalog = {
+  title: 'EL CATÁLOGO (AUMENTOS BIOMÉTRICOS)',
+  search: {
+    label: 'Buscar en el catálogo',
+    placeholder: 'Buscar',
+  },
+  filter: {
+    label: 'Filtrar por categoría',
+    placeholder: 'Categoría',
+    all: 'TODAS',
+  },
+  categories: ['MIEMBROS', 'ORGANOS', 'ESPINAL'] as const,
+  empty: 'SIN COINCIDENCIAS',
+  products: [
+    {
+      id: 'BRAZO_AUMENTADO_V4',
+      category: 'MIEMBROS',
+      name: 'BRAZO_AUMENTADO_V4',
+      description:
+        'Miembro superior motriz con enlace neural bidireccional y articulaciones de precisión.',
+      specs: ['Ancho de banda neural: 1.2 GB/s', 'Garantía: 10 Años'],
+    },
+    {
+      id: 'UNIDAD_OCULAR_V9',
+      category: 'ORGANOS',
+      name: 'UNIDAD_OCULAR_V9',
+      description:
+        'Unidad visual de espectro ampliado con integración cortical directa.',
+      specs: ['Sensibilidad: 0.01 lux', 'Campo visual: 210°'],
+    },
+    {
+      id: 'PIERNA_DE_REEMPLAZO_MK2',
+      category: 'MIEMBROS',
+      name: 'PIERNA_DE_REEMPLAZO_MK2',
+      description:
+        'Extremidad inferior adaptativa con respuesta a terreno en tiempo real.',
+      specs: ['Respuesta: 8 ms', 'Carga nominal: 220 kg'],
+    },
+    {
+      id: 'REFUERZO_ESPINAL',
+      category: 'ESPINAL',
+      name: 'REFUERZO_ESPINAL',
+      description:
+        'Refuerzo de columna con amortiguación activa y puente de datos medular.',
+      specs: ['Puente de datos: 3.4 GB/s', 'Carcasa: aleación de titanio'],
+    },
+  ] satisfies CatalogProduct[],
+  cta: {
+    specs: 'VER ESPECIFICACIONES',
+    cart: 'AGREGAR AL CARRITO',
+    added: 'AGREGADO ✓',
+  },
+}
+
+export const dataViz = {
+  donut: {
+    title: 'COMPATIBILIDAD DE COMPONENTES',
+    segments: [
+      { label: 'COMPATIBLE', value: 82, className: 'seg-cyan' },
+      { label: 'EN REVISIÓN', value: 12, className: 'seg-violet' },
+      { label: 'INCOMPATIBLE', value: 6, className: 'seg-dim' },
+    ] satisfies ChartSegment[],
+  },
+  line: {
+    title: 'TENDENCIAS DE INTEGRACIÓN AUMENTADA',
+    points: [0.42, 0.5, 0.58, 0.63, 0.71, 0.78, 0.84, 0.91],
+  },
+}
+
+export const performanceMetrics = {
+  title: 'MÉTRICAS DE RENDIMIENTO',
+  bars: [
+    { label: 'MIEMBROS', value: 72 },
+    { label: 'ESPINAL', value: 58 },
+    { label: 'ORGANOS', value: 64 },
+  ] satisfies MetricBar[],
+}
+
+export const sideMetrics = {
+  header: 'NEO-TOKYO 2049',
+  bars: [
+    { label: 'MIEMBROS', value: 72 },
+    { label: 'ESPINAL', value: 58 },
+    { label: 'ORGANOS', value: 64 },
+    { label: 'RED', value: 88 },
+    { label: 'CPU', value: 76 },
+  ] satisfies MetricBar[],
+}
+
+export const emergency = {
+  title: 'SOPORTE DE EMERGENCIA',
+  cta: {
+    label: 'SOPORTE DE EMERGENCIA',
+    href: 'mailto:emergency@neo-cybernetics.example',
+  } satisfies Link,
 }
 
 export const manifesto = {
@@ -75,78 +177,6 @@ export const manifesto = {
         'cada componente se ajusta a la fisiología de la persona, no al revés.',
     },
   ] satisfies Pillar[],
-}
-
-export const products = {
-  items: [
-    {
-      id: 'arc-7',
-      kind: 'Brazo biomecánico',
-      name: 'NEXUS Arc-7',
-      description: 'Control motor de precisión con retroalimentación táctil integrada.',
-      specs: [
-        '12 grados de libertad',
-        '340g menos que la generación anterior',
-        'batería para 36h de uso continuo',
-      ],
-      cta: { label: 'Ver especificaciones', href: '#showcase' },
-    },
-    {
-      id: 'stride-4',
-      kind: 'Pierna biomecánica',
-      name: 'NEXUS Stride-4',
-      description: 'Adaptación automática a terreno e inclinación en tiempo real.',
-      specs: [
-        'respuesta de sensor en 8ms',
-        '4 modos de marcha adaptativa',
-        'resistencia IP67',
-      ],
-      cta: { label: 'Ver especificaciones', href: '#stride-4' },
-    },
-    {
-      id: 'lumen-2',
-      kind: 'Ojo biónico',
-      name: 'NEXUS Lumen-2',
-      description:
-        'Resolución visual comparable al ojo humano, con rango espectral ampliado.',
-      specs: [
-        '24 megapíxeles equivalentes',
-        'visión de bajo nivel de luz mejorada',
-        'latencia de procesamiento de 4ms',
-      ],
-      cta: { label: 'Ver especificaciones', href: '#lumen-2' },
-    },
-  ] satisfies Product[],
-  featuredId: 'arc-7' satisfies Product['id'],
-}
-
-export const productShowcase = {
-  steps: [
-    {
-      id: 'shell',
-      label: 'Material de la carcasa',
-      detail:
-        'aleaciones de titanio y compuestos de fibra de carbono, seleccionados por peso y durabilidad.',
-    },
-    {
-      id: 'sensors',
-      label: 'Ubicación de sensores',
-      detail:
-        'interfaces neuromusculares que aprenden el patrón de movimiento de cada usuario.',
-    },
-    {
-      id: 'actuator',
-      label: 'Tipo de actuador',
-      detail:
-        'actuadores de precisión con tolerancias por debajo del milímetro en cada articulación.',
-    },
-    {
-      id: 'anchor',
-      label: 'Punto de anclaje neural',
-      detail:
-        'adaptación automática a la fisiología de la persona, con retroalimentación táctica integrada.',
-    },
-  ],
 }
 
 export const engineeringStats = [
@@ -185,21 +215,57 @@ export const human = {
   body: 'Lo amplifica. Cada componente que diseñamos existe para devolver movimiento, autonomía y precisión a una persona concreta — no para reemplazarla.',
 }
 
+export const productShowcase = {
+  eyebrow: 'VITRINA DEL PRODUCTO',
+  productId: 'BRAZO_AUMENTADO_V4',
+  progressLabel:
+    'Progreso del ensamblaje del BRAZO_AUMENTADO_V4',
+  steps: [
+    {
+      id: 'shell',
+      label: 'Material de la carcasa',
+      detail:
+        'aleaciones de titanio y compuestos de fibra de carbono, seleccionados por peso y durabilidad.',
+    },
+    {
+      id: 'sensors',
+      label: 'Ubicación de sensores',
+      detail:
+        'interfaces neuromusculares que aprenden el patrón de movimiento de cada usuario.',
+    },
+    {
+      id: 'actuator',
+      label: 'Tipo de actuador',
+      detail:
+        'actuadores de precisión con tolerancias por debajo del milímetro en cada articulación.',
+    },
+    {
+      id: 'anchor',
+      label: 'Punto de anclaje neural',
+      detail:
+        'adaptación automática a la fisiología de la persona, con retroalimentación táctil integrada.',
+    },
+  ],
+}
+
 export const finalCta = {
   title: 'Tu cuerpo, rediseñado.',
   highlight: 'rediseñado',
-  cta: { label: 'Descubrir NEXUS', href: 'mailto:contacto@nexus-biomech.example' } satisfies Link,
+  cta: {
+    label: 'SOLICITAR DIAGNÓSTICO',
+    href: 'mailto:support@neo-cybernetics.example',
+  } satisfies Link,
 }
 
 export const footer = {
   links: [
-    { label: 'Tecnología', href: '#tecnologia' },
-    { label: 'Productos', href: '#productos' },
-    { label: 'Ingeniería', href: '#ingenieria' },
-    { label: 'Nosotros', href: '#nosotros' },
-    { label: 'Contacto', href: 'mailto:contacto@nexus-biomech.example' },
+    { label: 'Legal', href: '#' },
+    { label: 'Términos', href: '#' },
+    {
+      label: 'Contacto',
+      href: 'mailto:support@neo-cybernetics.example',
+    },
   ] satisfies Link[],
-  contactEmail: 'contacto@nexus-biomech.example',
-  location: 'Buenos Aires, Argentina',
-  legal: 'NEXUS Biomechanical Systems — proyecto de portfolio, sin fines comerciales reales.',
+  cert: 'CERTIFICACIÓN BIO-SEGURIDAD: VERIFICADA ✓',
+  legal: '© 2049 NEO-CYBERNETICS CORP. El futuro es ahora.',
 }

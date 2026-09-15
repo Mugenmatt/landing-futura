@@ -17,8 +17,9 @@
   --violet-glare: #9400d3; /* Acento 3 — estados active, selección */
   --electric-green: #00ff41; /* Acento 4 — success/stable, métricas positivas */
 
-  /* Tipografía — DESIGN.md (reemplaza Space Grotesk/Inter) */
-  --font-display: 'Orbitron', 'Rajdhani', system-ui, sans-serif;
+  /* Tipografía — DESIGN.md (diplay = sans bold geométrica; Orbitron solo labels de UI cortas) */
+  --font-display: 'Space Grotesk', 'Rajdhani', system-ui, sans-serif;
+  --font-ui: 'Orbitron', var(--font-display); /* labels cortas tipo código: BRAZO_AUMENTADO_V4 */
   --font-mono: 'Space Mono', ui-monospace, 'Cascadia Code', monospace;
   --font-body: 'Rajdhani', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
