@@ -11,6 +11,8 @@ export type CatalogProduct = {
   name: string
   description: string
   specs: string[]
+  /** Clave de asset 3D en `three/models.ts`. Ausente = card sin modelo (código). */
+  model?: string
 }
 
 export type ChartSegment = {
@@ -37,6 +39,26 @@ export type Stat = {
   decimals: number
 }
 
+export type ShowroomAccent = 'cyan' | 'violet' | 'green'
+
+export type ShowroomItem = {
+  id: string
+  title: string
+  category: string
+  spec: string
+  /** Clave de asset 3D en `three/models.ts`. */
+  model: string
+  accent: ShowroomAccent
+}
+
+export type ShowroomContent = {
+  eyebrow: string
+  title: string
+  action: string
+  close: string
+  items: ShowroomItem[]
+}
+
 export const brand = {
   name: 'NEO-CYBERNETICS',
 }
@@ -45,6 +67,7 @@ export const nav = {
   status: 'ESTADO DEL SISTEMA — ENLACE NEURAL: ESTABLE',
   cta: 'ESTADO DEL SISTEMA',
   href: '#catalogo',
+  link: { label: 'SHOWROOM', href: '#showroom' } satisfies Link,
 }
 
 export const hero = {
@@ -69,6 +92,7 @@ export const catalog = {
   },
   categories: ['MIEMBROS', 'ORGANOS', 'ESPINAL'] as const,
   empty: 'SIN COINCIDENCIAS',
+  emptyReset: 'LIMPIAR FILTROS',
   products: [
     {
       id: 'BRAZO_AUMENTADO_V4',
@@ -77,6 +101,7 @@ export const catalog = {
       description:
         'Miembro superior motriz con enlace neural bidireccional y articulaciones de precisión.',
       specs: ['Ancho de banda neural: 1.2 GB/s', 'Garantía: 10 Años'],
+      model: 'armV4',
     },
     {
       id: 'UNIDAD_OCULAR_V9',
@@ -85,6 +110,7 @@ export const catalog = {
       description:
         'Unidad visual de espectro ampliado con integración cortical directa.',
       specs: ['Sensibilidad: 0.01 lux', 'Campo visual: 210°'],
+      model: 'ocularV9',
     },
     {
       id: 'PIERNA_DE_REEMPLAZO_MK2',
@@ -93,6 +119,7 @@ export const catalog = {
       description:
         'Extremidad inferior adaptativa con respuesta a terreno en tiempo real.',
       specs: ['Respuesta: 8 ms', 'Carga nominal: 220 kg'],
+      model: 'legMk2',
     },
     {
       id: 'REFUERZO_ESPINAL',
@@ -104,9 +131,19 @@ export const catalog = {
     },
   ] satisfies CatalogProduct[],
   cta: {
-    specs: 'VER ESPECIFICACIONES',
-    cart: 'AGREGAR AL CARRITO',
-    added: 'AGREGADO ✓',
+    assembly: 'VER ENSAMBLAJE',
+    diagnosis: 'SOLICITAR DIAGNÓSTICO',
+    diagnosisMailto: 'mailto:support@neo-cybernetics.example',
+    quote: 'AÑADIR A COTIZACIÓN',
+    quoted: 'EN COTIZACIÓN ✓',
+  },
+  quote: {
+    title: 'SESIÓN DE COTIZACIÓN',
+    action: 'SOLICITAR COTIZACIÓN',
+    actionMailto: 'mailto:support@neo-cybernetics.example',
+    removeLabel: 'QUITAR DE COTIZACIÓN',
+    announceAdded: '{code} AGREGADO A LA COTIZACIÓN',
+    announceRemoved: '{code} ELIMINADO DE LA COTIZACIÓN',
   },
 }
 
@@ -147,10 +184,13 @@ export const sideMetrics = {
 
 export const emergency = {
   title: 'SOPORTE DE EMERGENCIA',
+  copy: 'RESPUESTA AUTOMÁTICA EN <15 MIN — LÍNEA CRÍTICA',
+  mailto: 'mailto:emergency@neo-cybernetics.example',
+  subject: 'EMERGENCIA: IMPLANTE',
+  body: 'ID DEL IMPLANTE:\n\nDESCRIPCIÓN DEL PROBLEMA:\n',
   cta: {
     label: 'SOPORTE DE EMERGENCIA',
-    href: 'mailto:emergency@neo-cybernetics.example',
-  } satisfies Link,
+  },
 }
 
 export const manifesto = {
@@ -244,6 +284,71 @@ export const productShowcase = {
       label: 'Punto de anclaje neural',
       detail:
         'adaptación automática a la fisiología de la persona, con retroalimentación táctil integrada.',
+    },
+  ],
+}
+
+export const showroom: ShowroomContent = {
+  eyebrow: 'SHOWROOM',
+  title: 'UNIDADES EN EXHIBICIÓN',
+  action: 'PROYECTAR MÓDULO',
+  close: 'CERRAR',
+  items: [
+    {
+      id: 'CYBMAN_V2.0',
+      title: 'CYBMAN_V2.0',
+      category: 'UNIDAD BASE',
+      spec: 'CARCASA: ALEACIÓN DE TITANIO · ESTADO: OPERATIVO',
+      model: 'cybman',
+      accent: 'green',
+    },
+    {
+      id: 'BRAZO_BIONICO_LX3B',
+      title: 'BRAZO_BIONICO_LX3B',
+      category: 'MIEMBROS',
+      spec: 'ENLACE NEURAL BIDIRECCIONAL · 1.2 GB/S',
+      model: 'armV4',
+      accent: 'cyan',
+    },
+    {
+      id: 'ARM_TEARS_OF_STEEL',
+      title: 'ARM_TEARS_OF_STEEL',
+      category: 'MIEMBROS',
+      spec: 'MÓDULO EXPERIMENTAL · SERIE LIMITADA',
+      model: 'armSteel',
+      accent: 'violet',
+    },
+    {
+      id: 'ARM_PROSTETICO_RPA',
+      title: 'ARM_PROSTETICO_RPA',
+      category: 'MIEMBROS',
+      spec: 'ARTICULACIÓN 6 GDL · SERVO DE PRECISIÓN',
+      model: 'armProsthetic',
+      accent: 'cyan',
+    },
+    {
+      id: 'OJO_ROBOTICO_RXE',
+      title: 'OJO_ROBOTICO_RXE',
+      category: 'ORGANOS',
+      spec: 'ESPECTRO AMPLIADO · INTEGRACIÓN CORTICAL',
+      model: 'ocularRobotic',
+      accent: 'violet',
+    },
+    {
+      id: 'UNIDAD_OCULAR_V9',
+      title: 'UNIDAD_OCULAR_V9',
+      category: 'ORGANOS',
+      spec: 'SENSIBILIDAD 0.01 LUX · CAMPO 210°',
+      model: 'ocularV9',
+      accent: 'cyan',
+    },
+    {
+      id: 'PIERNA_DE_REEMPLAZO_MK2',
+      title: 'PIERNA_DE_REEMPLAZO_MK2',
+      category: 'MIEMBROS',
+      spec: 'RESPUESTA A TERRENO · 8 MS',
+      model: 'legMk2',
+      accent: 'violet',
     },
   ],
 }

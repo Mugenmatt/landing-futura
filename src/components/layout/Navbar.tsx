@@ -29,6 +29,9 @@ function Navbar() {
           {brand.name}
         </a>
         <StatusPill label={nav.status} />
+        <a className="nav-link" href={nav.link.href}>
+          {nav.link.label}
+        </a>
         <a className="nav-cta" href={nav.href}>
           {nav.cta}
         </a>

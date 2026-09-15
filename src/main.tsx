@@ -12,6 +12,8 @@ import './styles/engineering.css'
 import './styles/human.css'
 import './styles/final-cta.css'
 import './styles/showcase.css'
+import './styles/viewer3d.css'
+import './styles/showroom.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(

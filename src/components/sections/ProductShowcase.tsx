@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { catalog, productShowcase } from '../../content/content'
+import Viewer3D from '../ui/Viewer3D'
+import { model, armShowcaseFrames } from '../../three/models'
 
 const NODE_ORDER = productShowcase.steps.map((s) => s.id)
 
@@ -9,7 +11,7 @@ function ArmSchematic({
   onUntil: (stepId: string) => boolean
 }) {
   return (
-    <svg className="showcase-svg" viewBox="0 0 300 460" aria-hidden="true">
+    <svg className="showcase-svg" viewBox="0 0 300 460" aria-hidden="true" focusable="false">
       <g className={`svg-part${onUntil('shell') ? ' is-on' : ''}`}>
         <line x1="108" y1="64" x2="190" y2="210" />
         <line x1="190" y1="210" x2="140" y2="336" />
@@ -92,7 +94,15 @@ function ProductShowcase() {
       <div className="showcase-sticky">
         <div className="showcase-layout">
           <div className="showcase-visual">
-            <ArmSchematic onUntil={onUntil} />
+            <div className="showcase-viewer">
+              <Viewer3D
+                src={model.armV4}
+                label={featured?.name ?? 'BRAZO_AUMENTADO_V4'}
+                mode="orbit"
+                pose={armShowcaseFrames[active]}
+                poster={<ArmSchematic onUntil={onUntil} />}
+              />
+            </div>
             <div
               className="showcase-progress"
               role="progressbar"

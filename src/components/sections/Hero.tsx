@@ -1,6 +1,8 @@
 import { hero } from '../../content/content'
 import Button from '../ui/Button'
 import HeroVisual from '../ui/HeroVisual'
+import Viewer3D from '../ui/Viewer3D'
+import { model } from '../../three/models'
 
 function Hero() {
   const [pre, post] = hero.headline.split(hero.highlight)
@@ -24,7 +26,16 @@ function Hero() {
           </Button>
         </div>
       </div>
-      <HeroVisual />
+      <div className="hero-visual">
+        <Viewer3D
+          src={model.cybman}
+          label="CYBMAN_V2.0"
+          mode="drift"
+          autoRotateSpeed={0.18}
+          scan
+          poster={<HeroVisual />}
+        />
+      </div>
     </section>
   )
 }

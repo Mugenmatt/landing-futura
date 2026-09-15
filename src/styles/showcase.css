@@ -32,6 +32,11 @@
   gap: 1.5rem;
 }
 
+.showcase-viewer {
+  width: min(16rem, 100%);
+  aspect-ratio: 1;
+}
+
 .showcase-svg {
   width: min(16rem, 100%);
   height: auto;
@@ -150,6 +155,10 @@
   .showcase-layout {
     gap: 1rem;
     padding-block: 1rem;
+  }
+
+  .showcase-viewer {
+    width: min(14rem, 62%);
   }
 
   .showcase-svg {

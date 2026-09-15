@@ -63,12 +63,23 @@ Regla de uso (para que 4 neones no se peleen): cada acento tiene un rol fijo, no
 - Estructura de headings correcta: un solo `h1` (Hero), `h2` por sección, `h3` por item.
 - `alt`/label promped en todo elemento que aporte información; SVG decorativos con `aria-hidden="true"`, `focusable="false"`.
 
+## Integración 3D (showroom de componentes)
+
+Los modelos GLB pasan a ser pieza real de inventario, no render decorativo. Firme visual que no rompe la identidad dashboard:
+
+- **Luz de estudio neutra + key cyan sutil** en la escena (el neón vive en los overlays HUD/CSS, casi nunca en la malla).
+- **Scan sweep cyan** atravesando el modelo = señal de "diagnóstico" (rol de acción). **Violeta** = selección/quotado de un módulo. **Verde** = status estable (unidad base). **Rosa** queda para alertas (no aparece en escenas 3D). Nunca los 4 acentos en la misma vista de un modelo.
+- Firma de piso: rejilla de escaneo en perspectiva bajo cada pieza (+ crosshair/ID holograma mono).
+- Motion 3D controlado: **drift lento** en el hero (una sola animación, sin drag), **turntable en hover** solo con `pointer: fine` (cards, spotlight del showroom), **encuadres de cámara por paso** en el Product Showcase (según scroll), **scan sweep** al entrar a viewport / abrir spotlight. Nada se anima por defecto en masa.
+- `prefers-reduced-motion` → el 3D muestra un primer frame estático (modo `static`) y las animaciones de sobrevuelo/scan se apagan; con `pointer: coarse` o sin WebGL → poster/diagrama estático (esquemáticos SVG del hero/showcase o el fallback de código del widget).
+- Fallback de carga: label mono tipo sistema ("CARACTERIZANDO MÓDULO…") con dot cyan pulsando (`aria-busy`), hasta que el modelo está listo.
+
 ## Decisiones de implementación (ya resueltas, no reflotar)
 
-- **Elemento del hero**: esquemático SVG de miembro biomecánico + parallax por capas con `transform: translate` guiado por `--px`/`--py`. Se descartó three.js (criterio ARCHITECTURE, orden 1-2: SVG + CSS alcanza). Fallbacks: sin parallax en `pointer: coarse` ni con `prefers-reduced-motion`.
+- **Elemento del hero**: `CYBMAN_V2.0` en 3D (drift lento + scan sweep) vía el motor singleton de `src/three/`; en coarse/ sin WebGL cae al esquemático SVG estático (ex `HeroVisual`) como poster. El parallax por `--px`/`--py` se retiró.
 - **Stats de Ingeniería**: valor en display (Space Grotesk) cian con `--glow-dim`, sparkline SVG decorativo (`aria-hidden`) por tarjeta.
 - **Reveal**: animación de entrada solo en títulos de sección (restraint). Los números de Ingeniería cuentan al entrar en viewport; navbar cambia a `--bg-surface` con scroll (`is-scrolled`).
 - **Eyebrows de sección** (Catálogo, Ingeniería, Showcase): label mono mayúsculas cian; la sección usa el título de `CONTENT.md`, no copia inventada.
-- **Product Showcase**: sticky + progreso de scroll (rAF-throttled), pasos del **BRAZO_AUMENTADO_V4** (producto destacado del catálogo) con numeración secuencial `01/04` (contenido realmente secuencial), SVG de brazo que enciende nodos por paso. En mobile/tablet el panel se fija a `100svh` y se comprime (SVG a ~9rem, interlineado menor); en pantallas muy cortas (`max-height: 600px`) permite scroll interno.
+- **Product Showcase**: sticky + progreso de scroll (rAF-throttled), pasos del **BRAZO_AUMENTADO_V4** (producto destacado del catálogo) con numeración secuencial `01/04` (contenido realmente secuencial). El brazo 3D (`l-x3-b_bionic_arm`) encuadra regiones del modelo por paso vía cámara (`armShowcaseFrames`); en coarse/sin WebGL se muestra el esquemático SVG que enciende nodos por paso. En mobile/tablet el panel se fija a `100svh` y se comprime; en pantallas muy cortas (`max-height: 600px`) permite scroll interno.
 - **Smooth scroll**: solo y exclusivamente al hacer clic en un link interno de la página (nav, footer, CTAs a `#sección`, skip-link), vía delegado `useSmoothAnchors` que usa `scrollIntoView({ behavior: 'smooth' })` respetando `prefers-reduced-motion`. El scroll de rueda/teclado queda nativo: no hay `scroll-behavior: smooth` en CSS ni interceptación de `wheel`.
-- **Catálogo / Dashboard**: buscador + filtro 100% client-side (dos `useState` sobre el array de `content.ts`); cards con "AGREGAR AL CARRITO" decorativo (estado local "AGREGADO ✓" con timeout de ~2 s, sin persistencia); dona/ línea y barras en SVG/divs a mano; panel lateral "Métricas de Rendimiento" sticky en desktop que se apila abajo en mobile.
+- **Catálogo / Dashboard**: buscador + filtro 100% client-side (dos `useState` sobre el array de `content.ts`); cards con "AÑADIR A COTIZACIÓN" que agregan/quitan componentes a la "SESIÓN DE COTIZACIÓN" (estado real en sesión: lista visible con botones "QUITAR DE COTIZACIÓN", anuncios `aria-live`, CTA "SOLICITAR COTIZACIÓN" con `mailto` y subject prellenado; sin backend ni persistencia; se confirma con selección violeta `is-quoted`, nunca revierte solo); dona/ línea y barras en SVG/divs a mano; panel lateral "Métricas de Rendimiento" sticky en desktop que se apila abajo en mobile.

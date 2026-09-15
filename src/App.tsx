@@ -6,6 +6,7 @@ import Manifesto from './components/sections/Manifesto'
 import Catalog from './components/sections/Catalog'
 import Engineering from './components/sections/Engineering'
 import ProductShowcase from './components/sections/ProductShowcase'
+import Showroom from './components/sections/Showroom'
 import Human from './components/sections/Human'
 import FinalCta from './components/sections/FinalCta'
 
@@ -23,6 +24,7 @@ function App() {
         <Catalog />
         <Engineering />
         <ProductShowcase />
+        <Showroom />
         <Human />
         <FinalCta />
       </main>

@@ -94,8 +94,23 @@
   }
 }
 
-.nav-cta {
+.nav-link {
   margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  text-transform: uppercase;
+  letter-spacing: var(--label-tracking);
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.nav-link:hover {
+  color: var(--cyber-blue);
+}
+
+.nav-cta {
+  margin-left: 0;
   padding: 0.5rem 0.875rem;
   border: 1px solid var(--cyber-blue);
   border-radius: var(--radius-sm);
