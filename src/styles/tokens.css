@@ -1,0 +1,61 @@
+:root {
+  color-scheme: dark;
+
+  /* Paleta — DESIGN.md (cyberpunk/dashboard, 4 acentos neón con rol fijo) */
+  --bg-base: #05060a;
+  --bg-surface: #12121a;
+  --bg-panel-alt: #1a1d2a;
+  --text-primary: #f2f4f8;
+  --text-secondary: #7a8494;
+
+  --border-glow: #00ffff; /* borde a 100% en hover/activo */
+  --border-glow-dim: rgba(0, 255, 255, 0.22); /* borde en reposo, hairline */
+
+  /* Acentos neón — cada uno con rol fijo, nunca intercambiables */
+  --neon-pink: #ff007f; /* Acento 1 — alertas, highlights, danger */
+  --cyber-blue: #00ffff; /* Acento 2 — acción primaria, bordes activos, data viz */
+  --violet-glare: #9400d3; /* Acento 3 — estados active, selección */
+  --electric-green: #00ff41; /* Acento 4 — success/stable, métricas positivas */
+
+  /* Tipografía — DESIGN.md (reemplaza Space Grotesk/Inter) */
+  --font-display: 'Orbitron', 'Rajdhani', system-ui, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, 'Cascadia Code', monospace;
+  --font-body: 'Rajdhani', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Escala tipográfica: 3 escalones claros (display / heading / body) */
+  --text-display: clamp(2.25rem, 6vw, 4rem);
+  --text-heading: clamp(1.375rem, 2.5vw, 1.875rem);
+  --text-body: 1.0625rem;
+  --text-small: 0.8125rem;
+
+  --line-height-display: 1.1;
+  --line-height-heading: 1.2;
+  --line-height-body: 1.5;
+
+  --font-weight-display: 700;
+  --font-weight-heading: 700;
+  --font-weight-body: 500;
+
+  --letter-spacing-display: 0.01em;
+  --letter-spacing-heading: 0.01em;
+  --letter-spacing-body: 0.01em;
+
+  /* Labels de UI: mayúsculas sostenidas + tracking (DESIGN.md dashboard) */
+  --label-tracking: 0.14em;
+
+  /* Medida de línea del cuerpo */
+  --measure: 68ch;
+
+  /* Espaciado */
+  --space-section: clamp(4rem, 10vw, 8rem);
+  --space-prose: 1.5rem;
+  --space-gutter: clamp(1.25rem, 4vw, 3rem);
+
+  /* Radios: esquinas cortas, paneles dashboard */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  /* Glow sutil (reposo) y más notorio (hover/focus) — DESIGN.md */
+  --glow-dim: 0 0 8px rgba(0, 255, 255, 0.25);
+  --glow-strong: 0 0 16px rgba(0, 255, 255, 0.5);
+}

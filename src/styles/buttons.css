@@ -1,0 +1,46 @@
+.btn {
+  display: inline-block;
+  padding: 0.625rem 1.125rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  text-transform: uppercase;
+  letter-spacing: var(--label-tracking);
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    color 0.15s ease;
+}
+
+.btn--primary {
+  border: 1px solid var(--cyber-blue);
+  color: var(--cyber-blue);
+  background: transparent;
+}
+
+.btn--primary:hover {
+  background: rgba(0, 255, 255, 0.12);
+  box-shadow: var(--glow-strong);
+}
+
+.btn--secondary {
+  border: 1px solid var(--text-secondary);
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.btn--secondary:hover {
+  border-color: var(--text-primary);
+}
+
+.btn--danger {
+  border: 1px solid var(--neon-pink);
+  color: var(--neon-pink);
+  background: transparent;
+}
+
+.btn--danger:hover {
+  background: rgba(255, 0, 127, 0.12);
+  box-shadow: var(--glow-strong);
+}

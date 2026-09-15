@@ -1,0 +1,145 @@
+.hero {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding: var(--space-section) var(--space-gutter);
+  padding-bottom: clamp(6rem, 14vw, 10rem);
+}
+
+.hero-body {
+  max-width: 62rem;
+}
+
+.hero-title {
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+}
+
+.hero-highlight {
+  font-style: normal;
+  color: var(--cyber-blue);
+  text-shadow: var(--glow-dim);
+}
+
+.hero-sub {
+  color: var(--text-secondary);
+  font-size: var(--text-body);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.hero-visual {
+  position: relative;
+  margin-top: 3rem;
+  max-width: 22rem;
+}
+
+.hero-grid,
+.hero-svg,
+.hero-crosshair {
+  width: 100%;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border-glow-dim) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-glow-dim) 1px, transparent 1px);
+  background-size: 2.5rem 2.5rem;
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+
+.hero-visual-layer {
+  position: relative;
+  will-change: transform;
+}
+
+.hero-svg {
+  display: block;
+}
+
+.svg-construction line {
+  stroke: var(--border-glow-dim);
+  stroke-width: 1;
+  stroke-dasharray: 4 6;
+}
+
+.svg-bones line {
+  stroke: var(--text-secondary);
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+
+.svg-joints circle {
+  fill: none;
+  stroke: var(--cyber-blue);
+  stroke-width: 2;
+}
+
+.svg-joints circle:nth-child(even) {
+  fill: var(--cyber-blue);
+  stroke: none;
+}
+
+.hero-crosshair {
+  position: absolute;
+  left: -1.5rem;
+  top: -1.5rem;
+  width: 5rem;
+  opacity: 0.5;
+}
+
+.hero-crosshair line,
+.hero-crosshair circle {
+  stroke: var(--cyber-blue);
+  stroke-width: 1;
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .hero-visual {
+    margin-top: 0;
+    justify-self: end;
+    max-width: 26rem;
+    width: 100%;
+  }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) and (pointer: fine) {
+  .hero-visual-layer[data-depth='1.5'] {
+    transform: translate(
+      calc(var(--px, 0) * 8px),
+      calc(var(--py, 0) * 8px)
+    );
+  }
+
+  .hero-visual-layer[data-depth='2.5'] {
+    transform: translate(
+      calc(var(--px, 0) * 16px),
+      calc(var(--py, 0) * 16px)
+    );
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-actions .btn {
+    text-align: center;
+  }
+}
