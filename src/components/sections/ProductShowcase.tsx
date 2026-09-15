@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { productShowcase, products } from '../../content/content'
+import { catalog, productShowcase } from '../../content/content'
 
 const NODE_ORDER = productShowcase.steps.map((s) => s.id)
 
@@ -44,6 +44,10 @@ function ProductShowcase() {
   const steps = productShowcase.steps
   const [active, setActive] = useState(0)
 
+  const featured = catalog.products.find(
+    (p) => p.id === productShowcase.productId,
+  )
+
   useEffect(() => {
     let ticking = false
     const update = () => {
@@ -74,9 +78,6 @@ function ProductShowcase() {
     }
   }, [steps.length])
 
-  const featured = products.items.find(
-    (p) => p.id === products.featuredId,
-  )
   const onUntil = (stepId: string) =>
     NODE_ORDER.indexOf(stepId) !== -1 &&
     NODE_ORDER.indexOf(stepId) <= active
@@ -95,7 +96,7 @@ function ProductShowcase() {
             <div
               className="showcase-progress"
               role="progressbar"
-              aria-label="Progreso del ensamblaje del NEXUS Arc-7"
+              aria-label={productShowcase.progressLabel}
               aria-valuemin={0}
               aria-valuemax={steps.length}
               aria-valuenow={active + 1}
@@ -110,7 +111,7 @@ function ProductShowcase() {
           </div>
           <div className="showcase-head">
             <h2 className="section-eyebrow" id="showcase-title">
-              Product showcase
+              {productShowcase.eyebrow}
             </h2>
             <h3 className="showcase-product">{featured?.name}</h3>
             <ol className="showcase-steps">

@@ -6,6 +6,11 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 body {
@@ -35,6 +40,22 @@ blockquote,
 dl,
 dd {
   margin: 0;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+button {
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 h1,
@@ -86,6 +107,29 @@ video {
   color: var(--text-primary);
 }
 
+/* Eyebrow de sección — reusado por Catalog, Engineering y Showcase */
+.section-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: var(--label-tracking);
+  color: var(--cyber-blue);
+  margin-bottom: 2rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -93,6 +137,5 @@ video {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }
