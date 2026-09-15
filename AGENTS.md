@@ -1,10 +1,10 @@
-# AGENTS.md — Proyecto NEXUS (landing biomecánica)
+# AGENTS.md — Proyecto NEO-CYBERNETICS (landing biomecánica)
 
 Este archivo es la fuente de verdad para cualquier agente de IA que trabaje en este repo (OpenCode, Claude, etc.). Leelo completo antes de tocar código. Si algo acá contradice lo que te pide el usuario en el momento, el mensaje del usuario gana — pero avisá si el pedido rompe un principio del proyecto.
 
 ## Qué es esto
 
-Landing page ficticia de una sola página para "NEXUS" (nombre provisorio), una empresa de prótesis y componentes biomecánicos avanzados. Es un proyecto de **portfolio/práctica**, sin backend. El objetivo no es "una landing futurista genérica" sino que se sienta como una empresa de ingeniería real que vende hardware biomecánico premium, ambientada en el presente.
+Landing page ficticia de una sola página para "NEO-CYBERNETICS" (antes "NEXUS", nombre provisorio desaparecido), una empresa de aumentos biométricos (prótesis y componentes biomecánicos avanzados) ambientada en Neo-Tokio, 2049. Es un proyecto de **portfolio/práctica**, sin backend. El objetivo no es "una landing futurista genérica" sino que se sienta como la interfaz real de un proveedor de hardware biomecánico premium: estética cyberpunk/dashboard con 4 acentos neón de rol fijo.
 
 Antes de escribir código para cualquier sección, releé `DESIGN.md` (sistema visual) y `CONTENT.md` (copys y specs ficticias) para no inventar valores nuevos cada vez.
 
@@ -29,7 +29,7 @@ Si dos principios entran en conflicto, gana el de arriba.
 ## Qué NO hacer
 
 - No agregar librerías "porque una landing futurista debería tener X" (three.js, GSAP, frameworks de animación) sin haber descartado antes CSS transforms/opacity o SVG.
-- [ACTUALIZADO] Se abandonó la dirección "premium sutil, sin neón" del brief original: NEXUS ahora usa una identidad cyberpunk/dashboard con 4 acentos neón (ver `DESIGN.md`, sección Paleta). Sigue vigente evitar: cards idénticas con el mismo border-radius y sombra gris sin variación, flechitas "→" al final de todos los botones, separadores con "·", y usar los 4 neones sin rol fijo en un mismo componente.
+- [ACTUALIZADO] Se abandonó la dirección "premium sutil, sin neón" del brief original: NEO-CYBERNETICS usa una identidad cyberpunk/dashboard con 4 acentos neón (ver `DESIGN.md`, sección Paleta). Sigue vigente evitar: cards idénticas con el mismo border-radius y sombra gris sin variación, flechitas "→" al final de todos los botones, separadores con "·", y usar los 4 neones sin rol fijo en un mismo componente.
 - No animar todo: una sola animación de entrada bien orquestada en el hero vale más que fade-in-up repetido en cada sección.
 - No ignorar `prefers-reduced-motion`.
 - No sacrificar performance por un efecto 3D/parallax que "se ve lindo".
@@ -47,7 +47,7 @@ Si dos principios entran en conflicto, gana el de arriba.
 
 - `DESIGN.md` — sistema visual: paleta, tipografía, espaciado, principios de motion.
 - `ARCHITECTURE.md` — estructura de carpetas, enfoque técnico para 3D/animaciones, estrategia de performance y responsive.
-- `CONTENT.md` — todos los textos y datos ficticios (hero, productos, stats de ingeniería, footer) para que no cambien entre sesiones.
+- `CONTENT.md` — todos los textos y datos ficticios (marca, hero, catálogo/dashboard, stats, showcase, footer) para que no cambien entre sesiones.
 - `TASKS.md` — backlog dividido en tareas chicas, en orden sugerido de implementación.
 
 ## Definición de "terminado" para cada sección

@@ -1,10 +1,10 @@
-# DESIGN.md — Sistema visual de NEXUS
+# DESIGN.md — Sistema visual de NEO-CYBERNETICS
 
-Este documento fija las decisiones de diseño para que no cambien de sesión a sesión. Es una propuesta inicial coherente con el brief — se puede ajustar, pero una vez ajustado, actualizá este archivo (no dejes que el criterio quede solo en la cabeza del agente de turno).
+Este documento fija las decisiones de diseño para que no cambien de sesión a sesión. Es la base visual acordada; si se ajusta, actualizá este archivo (no dejes que el criterio quede solo en la cabeza del agente de turno).
 
 ## Por qué esta dirección (y qué evita)
 
-Los brief de "landing futurista/tech" tienden a caer siempre en los mismos dos lugares: (a) negro casi puro + un acento neón verde o vermellón, o (b) cyberpunk de neón saturado tipo gamer. El brief pide explícitamente evitar ambos. La dirección elegida acá viene de los **materiales reales de una prótesis biomecánica**: titanio, fibra de carbono, aleaciones tibias, superficies cepilladas — no de la estética "hacker".
+El proyecto arrancó con un brief de "empresa real de prótesis premium, sutil, sin neón". Esa dirección quedó **descartada**: NEO-CYBERNETICS ahora es una identidad cyberpunk/dashboard ambientada en Neo-Tokio 2049 (ver `CONTENT.md`). Evita los dos clichés del género por separado: no es negro casi puro + un solo verde de terminal (aburrido), ni cyberpunk saturado tipo gamer (ruidoso). Habita el medio: fondos oscuros profundos, superficies de panel, y **4 acentos neón con rol fijo** que se usan con intención, nunca intercambiables.
 
 ## Paleta
 
@@ -12,57 +12,63 @@ Los brief de "landing futurista/tech" tienden a caer siempre en los mismos dos l
 |---|---|---|
 | `--bg-base` | `#05060A` | Fondo principal (dark core) |
 | `--bg-surface` | `#12121A` | Cards, paneles, navbar |
-| `--bg-panel-alt` | `#1A1D2A` | Paneles secundarios / sidebars |
-| `--border-glow` | `#0FF` (con opacidad baja para el borde en reposo, 100% en hover) | Bordes de cards y paneles activos |
+| `--bg-panel-alt` | `#1A1D2A` | Paneles secundarios / sidebar |
+| `--border-glow` | `#0FF` (opacidad baja en reposo, 100% en hover) | Bordes de cards y paneles activos |
 | `--text-primary` | `#F2F4F8` | Texto principal |
 | `--text-secondary` | `#7A8494` | Metadata, labels secundarias |
-| `--neon-pink` | `#FF007F` | Acento 1 — alertas, highlights, hover de botones "danger"/destacados |
+| `--neon-pink` | `#FF007F` | Acento 1 — alertas, highlights, hover de botones "danger" |
 | `--cyber-blue` | `#00FFFF` | Acento 2 — botones primarios, bordes activos, data viz |
-| `--violet-glare` | `#9400D3` | Acento 3 — estados "active", elementos seleccionados |
-| `--electric-green` | `#00FF41` | Acento 4 — estados "success/stable", switches ON, métricas positivas |
+| `--violet-glare` | `#9400D3` | Acento 3 — estados "active", elementos seleccionados, categorías |
+| `--electric-green` | `#00FF41` | Acento 4 — estados "success/stable", status dot, métricas positivas |
 
-Regla de uso (para que 4 neones no se peleen entre sí): cada acento tiene un rol fijo, no se usan intercambiablemente. Cyan = acción principal. Rosa = alerta/destaque puntual. Violeta = selección/estado activo. Verde = estado positivo/stable. Nunca los 4 en el mismo componente.
+Regla de uso (para que 4 neones no se peleen): cada acento tiene un rol fijo, no se usan intercambiablemente. Cyan = acción principal. Rosa = alerta/destaque puntual. Violeta = selección/estado activo/categorías. Verde = estado positivo/stable. Nunca los 4 en el mismo componente. Ej.: en una card del catálogo conviven violeta (categoría) + cyan (acción) — rosa y verde quedan para sus paneles, no para cards.
 
 ## Tipografía
 
-- **Display (titulares, hero, headline):** estilo expandido/geométrico tipo "Akira Expanded" — si no está disponible como fuente libre, usar como alternativa **Michroma** o **Orbitron** (Google Fonts, gratuitas, mismo espíritu display-cyberpunk).
-- **Cuerpo y datos técnicos:** una sans técnica/monoespaciada — usar **Space Mono** o **JetBrains Mono** para specs, contadores y labels de datos; **Rajdhani** o **Chakra Petch** para texto corrido más largo (mejor legibilidad que un monospace completo).
-- Labels de UI (botones, tags, headers de panel) van en mayúsculas sostenidas — acá sí aplica, es parte del lenguaje visual de dashboard/HUD.
-- Los títulos de sección pueden llevar doble tratamiento: una palabra en el acento cyan/rosa dentro del headline (ej. "THE FUTURE IS NOW" con una palabra en neón) — es un recurso propio de este estilo, se usa con moderación (una vez por sección, no en cada línea).
+- **Display (titulares, hero, headline):** sans bold geométrica limpia — **Space Grotesk Bold** (~`--font-display`). No usar fuente decorativa tipo anime en el headline.
+- **Labels de UI cortas** (nombre de producto tipo código: `BRAZO_AUMENTADO_V4`, contador de dona): **Orbitron/Michroma** (~`--font-ui`), únicamente para estas piezas, no para el headline.
+- **Cuerpo y datos técnicos:** **Rajdhani** / **Chakra Petch** para texto corrido (~`--font-body`); **Space Mono** / **JetBrains Mono** (~`--font-mono`) para specs, contadores, labels de datos y código.
+- Labels de UI (botones, tags, headers de panel) van en mayúsculas sostenidas — es parte del lenguaje visual de dashboard/HUD.
+- Títulos de sección pueden llevar una palabra en acento cyan/rosa dentro del headline (una vez por sección, no en cada línea).
 
 ## Layout
 
-- Alineación predominante: **izquierda**, no centrada. Una landing centrada y simétrica es el default genérico; el brief pide sensación de ingeniería/documentación técnica, que se lee más natural alineada a la izquierda con una grilla visible.
-- Mucho espacio negativo — dejar que las secciones respiren, no llenar el viewport.
-- Grilla de fondo sutil (líneas finas tipo blueprint) como recurso ocasional, no en toda la página.
-- Numeración/eyebrows: usarlos únicamente donde el contenido es realmente secuencial (ej. componentes de una prótesis, pasos de ensamblaje). No ponerlos como decoración sobre cada sección.
+- Alineación predominante: **izquierda** (default genérico = centrada; acá se lee como documentación técnica/dashboard).
+- Mucho espacio negativo — las secciones respiran.
+- Grilla de fondo sutil (líneas tipo blueprint) como recurso ocasional, no en toda la página.
+- Numeración/eyebrows solo donde el contenido es realmente secuencial (ej. pasos del showcase `01/04`) o como label de sección en mono mayúsculas.
 
 ## Motion
 
 - Una sola animación de entrada orquestada en el Hero (no fade-up genérico repetido en cada sección).
-- El resto del motion responde a la acción del usuario: hover, scroll-linked reveal en la sección Product Showcase, números que cuentan al entrar en viewport.
-- Animar solo `transform` y `opacity`.
-- Glitch: extremadamente sutil y puntual (ej. un parpadeo de 100ms en un dato técnico al hacer hover), nunca como textura de fondo constante.
-- Respetar `prefers-reduced-motion: reduce` en todos los casos: desactivar parallax, 3D con movimiento constante y auto-play de conteos.
+- El resto del motion responde a la acción del usuario: hover, scroll-linked reveal en Product Showcase, números que cuentan al entrar en viewport, **pulso del status dot** (CSS `@keyframes`, autoplay apenas perceptible, permitido porque es señal de sistema).
+- Animar solo `transform` y `opacity` (el pulso del dot usa `opacity`, el glow usa `box-shadow` estático por frame).
+- Glitch/parpadeo: extremadamente sutil y puntual, nunca textura de fondo.
+- Respetar `prefers-reduced-motion: reduce` en todos los casos: desactivar parallax, auto-play de conteos y pulso.
 
-## Componentes UI (nuevo, estilo dashboard)
+## Componentes UI (estilo dashboard)
 
-- Botones: variantes **primary** (borde cyan, fill transparente, glow en hover), **secondary** (borde blanco/gris, sin glow), **danger** (borde/texto rosa neón). Tamaños small/large.
-- Toggles y checkboxes: estado ON en verde eléctrico con glow, estado OFF en gris apagado.
-- Paneles de datos (usar en la sección Ingeniería): borde fino con glow sutil en la esquina, header con label en mayúsculas + ícono, contenido tipo gráfico (dona, línea) en los colores de acento.
-- Glow: `box-shadow` con el color de acento a baja opacidad, más notorio en hover/focus que en reposo — nunca un glow enorme y constante en toda la página.
+- Botones: **primary** (borde cyan, fill transparente, glow en hover), **secondary** (borde blanco/gris, sin glow), **danger** (borde/texto rosa neón — Soporte de Emergencia).
+- StatusPill (navbar): dot verde + texto mono mayúsculas; pulso CSS en `opacity`. Es señal de sistema, no decoración animada.
+- Cards de catálogo: borde hairline cyan en reposo, glow en hover; código de producto en Orbitron; categoría en violeta.
+- Inputs (search) y select (filtro de categoría): fondo `--bg-surface`, borde hairline, focus con outline cyan + glow. Estilo más plano que los cards.
+- Paneles de datos: borde fino + glow sutil, header con label en mayúsculas + ícono, contenido tipo gráfico (dona, línea) en acentos.
+- Gráficos: **SVG dibujado a mano** (dona con `stroke-dasharray`, línea con `polyline`/`polygon`, barras con divs) — nunca una librería de charts.
+- Glow: `box-shadow` con acento a baja opacidad, más notorio en hover/focus, nunca un glow enorme y constante.
 
 ## Accesibilidad (piso mínimo, no negociable)
 
 - Contraste AA mínimo entre `--text-primary`/`--text-secondary` y los fondos usados.
-- Foco visible en todos los elementos interactivos (no `outline: none` sin reemplazo).
-- Estructura de headings correcta (un solo `h1`, jerarquía sin saltos).
-- `alt` descriptivo en toda imagen/render que aporte información (no `alt=""` salvo decorativo puro).
+- Foco visible en todos los elementos interactivos (incluidos `input`/`select`/`button`).
+- Estructura de headings correcta: un solo `h1` (Hero), `h2` por sección, `h3` por item.
+- `alt`/label promped en todo elemento que aporte información; SVG decorativos con `aria-hidden="true"`, `focusable="false"`.
 
 ## Decisiones de implementación (ya resueltas, no reflotar)
 
 - **Elemento del hero**: esquemático SVG de miembro biomecánico + parallax por capas con `transform: translate` guiado por `--px`/`--py`. Se descartó three.js (criterio ARCHITECTURE, orden 1-2: SVG + CSS alcanza). Fallbacks: sin parallax en `pointer: coarse` ni con `prefers-reduced-motion`.
-- **Stats de Ingeniería**: valor en Orbitron cian con `--glow-dim`, sparkline SVG decorativo (aria-hidden) por tarjeta.
+- **Stats de Ingeniería**: valor en display (Space Grotesk) cian con `--glow-dim`, sparkline SVG decorativo (`aria-hidden`) por tarjeta.
 - **Reveal**: animación de entrada solo en títulos de sección (restraint). Los números de Ingeniería cuentan al entrar en viewport; navbar cambia a `--bg-surface` con scroll (`is-scrolled`).
-- **Eyebrows de sección** (Productos, Ingeniería, Product Showcase): label mono mayúsculas cian; reutilizan labels de navegación de `CONTENT.md`, no inventan copy.
-- **Product Showcase**: sticky + progreso de scroll (rAF-throttled), pasos del Arc-7 con numeración secuencial `01/04` (permitido: contenido realmente secuencial), SVG de brazo que enciende nodos por paso.
+- **Eyebrows de sección** (Catálogo, Ingeniería, Showcase): label mono mayúsculas cian; la sección usa el título de `CONTENT.md`, no copia inventada.
+- **Product Showcase**: sticky + progreso de scroll (rAF-throttled), pasos del **BRAZO_AUMENTADO_V4** (producto destacado del catálogo) con numeración secuencial `01/04` (contenido realmente secuencial), SVG de brazo que enciende nodos por paso. En mobile/tablet el panel se fija a `100svh` y se comprime (SVG a ~9rem, interlineado menor); en pantallas muy cortas (`max-height: 600px`) permite scroll interno.
+- **Smooth scroll**: solo y exclusivamente al hacer clic en un link interno de la página (nav, footer, CTAs a `#sección`, skip-link), vía delegado `useSmoothAnchors` que usa `scrollIntoView({ behavior: 'smooth' })` respetando `prefers-reduced-motion`. El scroll de rueda/teclado queda nativo: no hay `scroll-behavior: smooth` en CSS ni interceptación de `wheel`.
+- **Catálogo / Dashboard**: buscador + filtro 100% client-side (dos `useState` sobre el array de `content.ts`); cards con "AGREGAR AL CARRITO" decorativo (estado local "AGREGADO ✓" con timeout de ~2 s, sin persistencia); dona/ línea y barras en SVG/divs a mano; panel lateral "Métricas de Rendimiento" sticky en desktop que se apila abajo en mobile.
