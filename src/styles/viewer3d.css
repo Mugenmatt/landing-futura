@@ -56,38 +56,230 @@
   fill: var(--cyber-blue);
 }
 
-.viewer3d-status {
+/* ── Cyberpunk HUD Loader ─────────────────────────────────────── */
+.cyber-loader {
   position: absolute;
-  left: 0.75rem;
-  bottom: 0.5rem;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+  animation: cyber-loader-fade-in 0.3s ease both;
+}
+
+@keyframes cyber-loader-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── SVG ring + scan ──────────────────────────────────────────── */
+.cyber-loader-svg {
+  width: min(11rem, 55%);
+  height: auto;
+  overflow: visible;
+}
+
+.cyber-loader-ring {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cyber-loader-ring--outer {
+  stroke: var(--cyber-blue);
+  opacity: 0.4;
+  stroke-dasharray: 32 16 24 8 24 16;
+  transform-origin: center;
+  animation: cyber-loader-ring-spin 6s linear infinite;
+}
+
+.cyber-loader-ring--inner {
+  stroke: var(--border-glow-dim);
+  opacity: 0.5;
+  stroke-dasharray: 16 8;
+  transform-origin: center;
+  animation: cyber-loader-ring-spin 6s linear infinite reverse;
+}
+
+@keyframes cyber-loader-ring-spin {
+  to { transform: rotate(360deg); }
+}
+
+.cyber-loader-scan {
+  stroke: var(--cyber-blue);
+  stroke-width: 1.5;
+  opacity: 0.85;
+  transform-origin: 100px 100px;
+  animation: cyber-loader-scan-sweep 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes cyber-loader-scan-sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.cyber-loader-cross {
+  stroke: var(--cyber-blue);
+  stroke-width: 1;
+  opacity: 0.45;
+  animation: cyber-loader-pulse 1.6s ease-in-out infinite;
+}
+
+/* ── HUD corner brackets ──────────────────────────────────────── */
+.cyber-loader-bracket {
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.cyber-loader-bracket::before,
+.cyber-loader-bracket::after {
+  content: '';
+  position: absolute;
+  background: var(--cyber-blue);
+}
+
+.cyber-loader-bracket::before {
+  width: 100%;
+  height: 1px;
+}
+
+.cyber-loader-bracket::after {
+  width: 1px;
+  height: 100%;
+}
+
+.cyber-loader-bracket--tl {
+  top: 15%;
+  left: 15%;
+}
+.cyber-loader-bracket--tl::before { top: 0; left: 0; }
+.cyber-loader-bracket--tl::after { top: 0; left: 0; }
+
+.cyber-loader-bracket--tr {
+  top: 15%;
+  right: 15%;
+}
+.cyber-loader-bracket--tr::before { top: 0; right: 0; }
+.cyber-loader-bracket--tr::after { top: 0; right: 0; }
+
+.cyber-loader-bracket--bl {
+  bottom: 15%;
+  left: 15%;
+}
+.cyber-loader-bracket--bl::before { bottom: 0; left: 0; }
+.cyber-loader-bracket--bl::after { bottom: 0; left: 0; }
+
+.cyber-loader-bracket--br {
+  bottom: 15%;
+  right: 15%;
+}
+.cyber-loader-bracket--br::before { bottom: 0; right: 0; }
+.cyber-loader-bracket--br::after { bottom: 0; right: 0; }
+
+/* ── Label (module ID) ────────────────────────────────────────── */
+.cyber-loader-label {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-ui);
+  font-size: 0.5625rem;
+  letter-spacing: 0.16em;
+  color: var(--cyber-blue);
+  opacity: 0.6;
+  text-shadow: var(--glow-dim);
+  white-space: nowrap;
+}
+
+/* ── Scan progress bar ────────────────────────────────────────── */
+.cyber-loader-bar {
+  position: absolute;
+  bottom: 26%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(9rem, 48%);
+  height: 2px;
+  background: var(--border-glow-dim);
+  overflow: hidden;
+}
+
+.cyber-loader-bar-fill {
+  width: 100%;
+  height: 100%;
+  background: var(--cyber-blue);
+  transform-origin: left;
+  animation: cyber-loader-bar-scan 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes cyber-loader-bar-scan {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0.3;
+  }
+}
+
+/* ── Status text + dot ────────────────────────────────────────── */
+.cyber-loader-status {
+  position: absolute;
+  bottom: 18%;
+  left: 50%;
+  transform: translateX(-50%);
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--cyber-blue);
   text-shadow: var(--glow-dim);
-  pointer-events: none;
+  white-space: nowrap;
 }
 
-.viewer3d-status-dot {
+.cyber-loader-status-dot {
   width: 0.375rem;
   height: 0.375rem;
   border-radius: 50%;
   background: var(--cyber-blue);
   box-shadow: var(--glow-dim);
-  animation: viewer-status-pulse 1.6s ease-in-out infinite;
+  animation: cyber-loader-pulse 1.6s ease-in-out infinite;
 }
 
-@keyframes viewer-status-pulse {
-  0%,
-  100% {
-    opacity: 0.35;
+@keyframes cyber-loader-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+/* ── Reduced motion: disable all loader animations ────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .cyber-loader {
+    animation: none;
   }
-  50% {
-    opacity: 1;
+  .cyber-loader-ring--outer,
+  .cyber-loader-ring--inner,
+  .cyber-loader-scan,
+  .cyber-loader-cross,
+  .cyber-loader-bar-fill,
+  .cyber-loader-status-dot {
+    animation: none;
+  }
+  .cyber-loader-scan {
+    opacity: 0;
+  }
+  .cyber-loader-bar-fill {
+    transform: translateX(-50%);
+    opacity: 0.6;
   }
 }
 

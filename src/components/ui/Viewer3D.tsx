@@ -26,6 +26,59 @@ function hasCoarsePointer() {
   )
 }
 
+function CyberpunkLoader({ label }: { label: string }) {
+  return (
+    <div className="cyber-loader" role="status" aria-live="polite" aria-label={`Cargando modelo ${label}`}>
+      <svg className="cyber-loader-svg" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+        {/* Ring exterior */}
+        <polygon
+          className="cyber-loader-ring cyber-loader-ring--outer"
+          points="100,8 178,44 178,156 100,192 22,156 22,44"
+        />
+        {/* Ring interior */}
+        <polygon
+          className="cyber-loader-ring cyber-loader-ring--inner"
+          points="100,28 162,54 162,146 100,172 38,146 38,54"
+        />
+        {/* Scan line */}
+        <line
+          className="cyber-loader-scan"
+          x1="100"
+          y1="100"
+          x2="100"
+          y2="8"
+          strokeLinecap="round"
+        />
+        {/* Crosshair */}
+        <line className="cyber-loader-cross" x1="100" y1="80" x2="100" y2="90" />
+        <line className="cyber-loader-cross" x1="100" y1="110" x2="100" y2="120" />
+        <line className="cyber-loader-cross" x1="80" y1="100" x2="90" y2="100" />
+        <line className="cyber-loader-cross" x1="110" y1="100" x2="120" y2="100" />
+      </svg>
+
+      {/* HUD corner brackets */}
+      <div className="cyber-loader-bracket cyber-loader-bracket--tl" aria-hidden="true" />
+      <div className="cyber-loader-bracket cyber-loader-bracket--tr" aria-hidden="true" />
+      <div className="cyber-loader-bracket cyber-loader-bracket--bl" aria-hidden="true" />
+      <div className="cyber-loader-bracket cyber-loader-bracket--br" aria-hidden="true" />
+
+      {/* Label */}
+      <span className="cyber-loader-label">{label}</span>
+
+      {/* Scan progress bar */}
+      <div className="cyber-loader-bar" aria-hidden="true">
+        <div className="cyber-loader-bar-fill" />
+      </div>
+
+      {/* Status text */}
+      <span className="cyber-loader-status">
+        <span className="cyber-loader-status-dot" aria-hidden="true" />
+        INICIALIZANDO…
+      </span>
+    </div>
+  )
+}
+
 function PosterFallback({ label }: { label: string }) {
   return (
     <div className="viewer3d-poster" role="img" aria-label={label}>
@@ -101,12 +154,7 @@ function Viewer3D({
         <circle cx="9" cy="17" r="1" />
         <circle cx="12" cy="17" r="1" />
       </svg>
-      {busy && (
-        <div className="viewer3d-status" role="status" aria-live="polite">
-          <span className="viewer3d-status-dot" aria-hidden="true" />
-          CARACTERIZANDO MÓDULO…
-        </div>
-      )}
+      {busy && <CyberpunkLoader label={label} />}
     </div>
   )
 }

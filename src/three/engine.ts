@@ -5,6 +5,138 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 export const DRACO_PATH = `${import.meta.env.BASE_URL}models3D/draco/`
 export const MODEL_FIT_SIZE = 3
 
+/** Reutilizado por computeWorldBounds (8 esquinas). */
+const _boundsCorners = [
+  0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1,
+  1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1,
+] as const
+
+function computeWorldBounds(root: THREE.Object3D): THREE.Box3 | null {
+  /* Si no actualizo la cadena, los clones con matrixAutoUpdate=false (los
+     mesh rígidos) arrastran matrixWorld stale y el bbox sale mal centrado. */
+  root.updateWorldMatrix(true, true)
+  return computeBoundsFromMatrices(root, (obj) => obj.matrixWorld.elements)
+}
+
+/**
+ * Igual que computeWorldBounds pero en el espacio del propio root: usa las
+ * matrices LOCALES acumuladas (obj.matrix) en vez de matrixWorld. Necesario
+ * cuando el root vive dentro de un padre con transform (this.group rota por
+ * el drift): matrixWorld ya incluye esa rotación y el bbox sale desplazado.
+ */
+function computeLocalBounds(root: THREE.Object3D): THREE.Box3 | null {
+  if (root.matrixAutoUpdate) root.updateMatrix()
+  return computeBoundsRecursive(root, new THREE.Matrix4())
+}
+
+function computeBoundsFromMatrices(
+  root: THREE.Object3D,
+  getMatrix: (obj: THREE.Object3D) => number[],
+): THREE.Box3 | null {
+  const box = new THREE.Box3()
+  let found = false
+  root.traverse((obj) => {
+    if (!(obj as THREE.Mesh).isMesh) return
+    const geo = (obj as THREE.Mesh).geometry
+    if (!geo) return
+    let bb = geo.boundingBox
+    if (!bb) {
+      try {
+        geo.computeBoundingBox()
+      } catch {
+        return
+      }
+      bb = geo.boundingBox
+    }
+    if (!bb) return
+    const me = getMatrix(obj)
+    const minX = bb!.min.x
+    const minY = bb!.min.y
+    const minZ = bb!.min.z
+    const maxX = bb!.max.x
+    const maxY = bb!.max.y
+    const maxZ = bb!.max.z
+    for (let i = 0; i < 24; i += 3) {
+      const x = _boundsCorners[i] ? maxX : minX
+      const y = _boundsCorners[i + 1] ? maxY : minY
+      const z = _boundsCorners[i + 2] ? maxZ : minZ
+      const px = me[0] * x + me[4] * y + me[8] * z + me[12]
+      const py = me[1] * x + me[5] * y + me[9] * z + me[13]
+      const pz = me[2] * x + me[6] * y + me[10] * z + me[14]
+      box.min.x = Math.min(box.min.x, px)
+      box.min.y = Math.min(box.min.y, py)
+      box.min.z = Math.min(box.min.z, pz)
+      box.max.x = Math.max(box.max.x, px)
+      box.max.y = Math.max(box.max.y, py)
+      box.max.z = Math.max(box.max.z, pz)
+    }
+    found = true
+  })
+  return found ? box : null
+}
+
+function computeBoundsRecursive(
+  obj: THREE.Object3D,
+  parentMat: THREE.Matrix4,
+): THREE.Box3 | null {
+  const acc = new THREE.Matrix4().multiplyMatrices(parentMat, obj.matrix)
+  if ((obj as THREE.Mesh).isMesh) {
+    const geo = (obj as THREE.Mesh).geometry
+    if (geo) {
+      let bb: THREE.Box3 | null = geo.boundingBox
+      if (!bb) {
+        try {
+          geo.computeBoundingBox()
+        } catch {
+          bb = null
+        }
+      }
+      if (bb) {
+        const me = acc.elements
+        const minX = bb.min.x
+        const minY = bb.min.y
+        const minZ = bb.min.z
+        const maxX = bb.max.x
+        const maxY = bb.max.y
+        const maxZ = bb.max.z
+        const box = new THREE.Box3()
+        for (let i = 0; i < 24; i += 3) {
+          const x = _boundsCorners[i] ? maxX : minX
+          const y = _boundsCorners[i + 1] ? maxY : minY
+          const z = _boundsCorners[i + 2] ? maxZ : minZ
+          const px = me[0] * x + me[4] * y + me[8] * z + me[12]
+          const py = me[1] * x + me[5] * y + me[9] * z + me[13]
+          const pz = me[2] * x + me[6] * y + me[10] * z + me[14]
+          box.min.x = Math.min(box.min.x, px)
+          box.min.y = Math.min(box.min.y, py)
+          box.min.z = Math.min(box.min.z, pz)
+          box.max.x = Math.max(box.max.x, px)
+          box.max.y = Math.max(box.max.y, py)
+          box.max.z = Math.max(box.max.z, pz)
+        }
+        let result: THREE.Box3 | null = box
+        for (const c of obj.children) {
+          const sub = computeBoundsRecursive(c, acc)
+          if (sub) {
+            if (result === null) result = sub
+            else result.union(sub)
+          }
+        }
+        return result
+      }
+    }
+  }
+  let result: THREE.Box3 | null = null
+  for (const c of obj.children) {
+    const sub = computeBoundsRecursive(c, acc)
+    if (sub) {
+      if (result === null) result = sub
+      else result.union(sub)
+    }
+  }
+  return result
+}
+
 export type ViewerMode =
   | 'drift' /* rotación continua lenta, sin interact (hero) */
   | 'orbit' /* interact con pointer/teclado, autoplay opcional */
@@ -110,10 +242,11 @@ class Engine {
     view.teardown()
     const gpu = view.gpu
     if (gpu) {
-      /* El renderer quedó ligado al canvas de esta vista (ver createGpu):
-         liberar el contexto WebGL al soltar la vista para no agotar límites. */
+      /* dispose libera texturas/geometría y la memoria interna del renderer.
+         forceContextLoss NO se usa: el canvas es propiedad de React y al
+         re-montarse (StrictMode dev, HMR, remount) el contexto perdido
+         no se recupera — el modelo nunca volvería a renderizar. */
       gpu.renderer.dispose()
-      gpu.renderer.forceContextLoss()
       this.gpus = this.gpus.filter((g) => g !== gpu)
     }
     if (this.views.size === 0) this.stopLoop()
@@ -125,15 +258,114 @@ class Engine {
       pending = new Promise<THREE.Group>((resolve, reject) => {
         this.getGltfLoader()
           .loadAsync(url)
-          .then((gltf) => resolve(this.normalize(gltf.scene)), reject)
+          .then(
+            (gltf) =>
+              resolve(this.normalize(this.orientUpright(this.bakeStaticBindPose(gltf.scene)))),
+            reject,
+          )
       })
       this.modelCache.set(url, pending)
     }
     return pending
   }
 
+  /**
+   * Convierte mallas skinneadas del GLB en mallas rígidas (bind pose horneado).
+   *
+   * Por qué es obligatorio: los modelos Sketchfab llegan con el esqueleto a
+   * escala ~100 y la malla en el mismo subárbol. Al normalizar con un wrapper
+   * escalado, la escala se aplica DOS veces en el pipeline de skinning (una
+   * vía matrixWorld de la malla y otra vía los huesos) y el render queda
+   * ~s² — invisible. Como los modelos del sitio son estáticos (drift/orbit/
+   * turntable, sin animación), horneamos el bind pose en la geometría y
+   * desacoplamos la malla del esqueleto: la normalización vuelve a funcionar
+   * con una sola escala.
+   */
+  private bakeStaticBindPose(group: THREE.Group): THREE.Group {
+    group.updateWorldMatrix(true, true)
+    const skinned: THREE.SkinnedMesh[] = []
+    group.traverse((obj) => {
+      if ((obj as THREE.SkinnedMesh).isSkinnedMesh)
+        skinned.push(obj as THREE.SkinnedMesh)
+    })
+    if (skinned.length === 0) return group
+
+    for (const mesh of skinned) {
+      /* En bind pose, boneWorld × boneInverse = identidad, así que el render
+         skinned equivale a (meshWorld × bindMatrix × vértice). Horneamos eso. */
+      const geo = mesh.geometry
+      if (geo) geo.applyMatrix4(mesh.bindMatrix)
+
+      mesh.updateWorldMatrix(true, false)
+      const world = mesh.matrixWorld.clone()
+      const parent = mesh.parent
+      if (!parent) continue
+      parent.remove(mesh)
+
+      /* Reemplazo la instancia SkinnedMesh por un THREE.Mesh rígido con la
+         matriz LOCAL como transform propia. Al re-insertarlo bajo el MISMO
+         padre, matrixWorld se reconstituye como parent.matrixWorld × matrix
+         y equivale al world original del SkinnedMesh — sin aplicar el
+         transform del padre dos veces (bug: si copiamos el world, el rígido
+         queda con T0 × T0 × L y el modelo se descuadra del centro). */
+      const rigid = new THREE.Mesh(
+        geo ?? new THREE.BufferGeometry(),
+        mesh.material,
+      )
+      rigid.name = mesh.name
+      rigid.matrix.copy(mesh.matrix)
+      rigid.matrixWorld.copy(world)
+      rigid.matrixAutoUpdate = false
+      rigid.castShadow = mesh.castShadow
+      rigid.receiveShadow = mesh.receiveShadow
+      rigid.frustumCulled = mesh.frustumCulled
+      if (mesh.morphTargetDictionary) {
+        rigid.morphTargetDictionary = mesh.morphTargetDictionary
+      }
+      if (mesh.morphTargetInfluences) {
+        rigid.morphTargetInfluences = mesh.morphTargetInfluences
+      }
+
+      if (geo) {
+        geo.deleteAttribute('skinIndex')
+        geo.deleteAttribute('skinWeight')
+        geo.computeBoundingBox()
+        geo.computeBoundingSphere()
+      }
+      group.add(rigid)
+    }
+    return group
+  }
+
+  /**
+   * Devuelve el grupo "parado" si el baking lo dejó tumbado.
+   *
+   * Los GLB de Sketchfab exportan el humanoide con el esqueleto a escala ~100
+   * y un bind pose que acuesta el cuerpo en el plano XZ: el eje vertical
+   * original (Y del autor) termina a lo largo de ±Z y el eje frontal/ventral
+   * (que debería ser la profundidad) termina a lo largo de ±Y. Después de
+   * horneado, la figura queda tendida en el suelo con dos ejes horizontales
+   * largos (estatura y envergadura) y un eje vertical fino (el tórax). El
+   * baking preserva X intacto, así que la corrección es una rotación sobre X
+   * que devuelve el eje largo a +Y. Los modelos estáticos (brazos, ojos,
+   * pierna) no pasan por acá: no son skinneados.
+   */
+  private orientUpright(group: THREE.Group): THREE.Group {
+    const box = computeWorldBounds(group)
+    if (!box) return group
+    const size = box.getSize(new THREE.Vector3())
+    const thinY = size.y <= Math.min(size.x, size.z) * 0.45
+    if (!thinY) return group
+    const root = new THREE.Group()
+    root.quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2)
+    root.add(group)
+    root.updateMatrix()
+    return root
+  }
+
   private normalize(group: THREE.Group): THREE.Group {
-    const box = new THREE.Box3().setFromObject(group)
+    const box = computeWorldBounds(group)
+    if (!box) return group
     const size = box.getSize(new THREE.Vector3())
     const maxDim = Math.max(size.x, size.y, size.z) || 1
     const center = box.getCenter(new THREE.Vector3())
@@ -144,7 +376,10 @@ class Engine {
        (matriz identity) quede centrado y con el tamaño de encaje. */
     const wrapper = new THREE.Group()
     wrapper.add(group)
-    wrapper.position.set(-center.x, -center.y, -center.z)
+    /* La transform de un Object3D es pos + scale·v: para que el centro del
+       contenido caiga en el origen del wrapper, el translate debe compensar
+       en el espacio YA escalado (-scale × center), no en unidades crudas. */
+    wrapper.position.set(-center.x * scale, -center.y * scale, -center.z * scale)
     wrapper.scale.setScalar(scale)
     wrapper.updateMatrix()
     return wrapper
@@ -179,6 +414,11 @@ class Engine {
 }
 
 export const engine = new Engine()
+
+if (import.meta.env.DEV) {
+  ;(window as unknown as Record<string, unknown>).__neoEngine = engine
+  ;(window as unknown as Record<string, unknown>).__neoTHREE = THREE
+}
 
 export class ModelView {
   readonly mode: ViewerMode
@@ -323,7 +563,8 @@ export class ModelView {
 
   setFrame(pose: FramePose) {
     if (!this.model) return
-    const bbox = new THREE.Box3().setFromObject(this.model)
+    const bbox = computeLocalBounds(this.model)
+    if (!bbox) return
     const size = bbox.getSize(new THREE.Vector3())
     const center = bbox.getCenter(new THREE.Vector3())
     const axis =
@@ -354,7 +595,8 @@ export class ModelView {
 
   private fitCamera() {
     if (!this.model) return
-    const bbox = new THREE.Box3().setFromObject(this.model)
+    const bbox = computeLocalBounds(this.model)
+    if (!bbox) return
     const size = bbox.getSize(new THREE.Vector3())
     const maxDim = Math.max(size.x, size.y, size.z) || 1
     this.baseRadius =
@@ -385,8 +627,8 @@ export class ModelView {
 
   private placeScan() {
     if (!this.scanMesh || !this.model) return
-    const bbox = new THREE.Box3().setFromObject(this.model)
-    const size = bbox.getSize(new THREE.Vector3())
+    const bbox = computeLocalBounds(this.model)
+    const size = bbox ? bbox.getSize(new THREE.Vector3()) : new THREE.Vector3(1, 1, 1)
     this.scanMesh.scale.set(size.x * 1.2, 0.02, size.z * 1.2)
     this.scanMesh.position.set(0, this.scanY, 0)
   }

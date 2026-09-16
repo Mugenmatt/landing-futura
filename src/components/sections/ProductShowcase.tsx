@@ -4,12 +4,23 @@ import Viewer3D from '../ui/Viewer3D'
 import { model, armShowcaseFrames } from '../../three/models'
 
 const NODE_ORDER = productShowcase.steps.map((s) => s.id)
+const pad = (n: number) => String(n).padStart(2, '0')
 
 function ArmSchematic({
   onUntil,
+  at,
 }: {
   onUntil: (stepId: string) => boolean
+  at: (stepId: string) => boolean
 }) {
+  const CHIPS = [
+    { id: 'anchor', code: '04', x: 30, y: 88, toX: 102, toY: 70 },
+    { id: 'shell', code: '01', x: 166, y: 30, toX: 166, toY: 118 },
+    { id: 'actuator', code: '03', x: 222, y: 150, toX: 192, toY: 206 },
+    { id: 'sensors', code: '02', x: 214, y: 330, toX: 194, toY: 350 },
+  ]
+  const cls = (id: string) =>
+    at(id) ? 'svg-chip is-live' : onUntil(id) ? 'svg-chip is-on' : 'svg-chip'
   return (
     <svg className="showcase-svg" viewBox="0 0 300 460" aria-hidden="true" focusable="false">
       <g className={`svg-part${onUntil('shell') ? ' is-on' : ''}`}>
@@ -37,6 +48,15 @@ function ArmSchematic({
         <line x1="88" y1="64" x2="128" y2="64" />
         <line x1="108" y1="44" x2="108" y2="84" />
       </g>
+      {CHIPS.map((c) => (
+        <g key={c.id} className={cls(c.id)}>
+          <line x1={c.x + 4} y1={c.y + 9} x2={c.toX} y2={c.toY} />
+          <rect x={c.x} y={c.y} width="58" height="18" rx="2" />
+          <text x={c.x + 5} y={c.y + 12.5}>
+            {c.code} {c.id.toUpperCase()}
+          </text>
+        </g>
+      ))}
     </svg>
   )
 }
@@ -83,6 +103,7 @@ function ProductShowcase() {
   const onUntil = (stepId: string) =>
     NODE_ORDER.indexOf(stepId) !== -1 &&
     NODE_ORDER.indexOf(stepId) <= active
+  const at = (stepId: string) => NODE_ORDER.indexOf(stepId) === active
 
   return (
     <section
@@ -93,45 +114,68 @@ function ProductShowcase() {
     >
       <div className="showcase-sticky">
         <div className="showcase-layout">
-          <div className="showcase-visual">
+          <div className="showcase-stage">
             <div className="showcase-viewer">
               <Viewer3D
                 src={model.armV4}
                 label={featured?.name ?? 'BRAZO_AUMENTADO_V4'}
                 mode="orbit"
                 pose={armShowcaseFrames[active]}
-                poster={<ArmSchematic onUntil={onUntil} />}
+                poster={<ArmSchematic onUntil={onUntil} at={at} />}
               />
             </div>
+            <div className="showcase-hud" aria-hidden="true">
+              <span className="hud-zone">
+                <span className="hud-zone-code">MOD-{pad(active + 1)}</span>
+                <span className="hud-zone-name">
+                  {steps[active].id.toUpperCase()}
+                </span>
+              </span>
+              <span className="hud-counter">
+                <b className="hud-counter-current">{pad(active + 1)}</b>
+                <i className="hud-counter-total">/{pad(steps.length)}</i>
+              </span>
+            </div>
             <div
-              className="showcase-progress"
+              className="showcase-track"
               role="progressbar"
               aria-label={productShowcase.progressLabel}
-              aria-valuemin={0}
+              aria-valuemin={1}
               aria-valuemax={steps.length}
               aria-valuenow={active + 1}
             >
-              <span className="progress-current">
-                {String(active + 1).padStart(2, '0')}
-              </span>
-              <span className="progress-total">
-                /{String(steps.length).padStart(2, '0')}
-              </span>
+              {steps.map((step, i) => (
+                <span
+                  key={step.id}
+                  className={
+                    i === active ? 'is-live' : i < active ? 'is-on' : ''
+                  }
+                />
+              ))}
             </div>
           </div>
+
           <div className="showcase-head">
-            <h2 className="section-eyebrow" id="showcase-title">
-              {productShowcase.eyebrow}
-            </h2>
-            <h3 className="showcase-product">{featured?.name}</h3>
+            <div className="showcase-heading">
+              <h2 className="section-eyebrow" id="showcase-title">
+                {productShowcase.eyebrow}
+              </h2>
+              <h3 className="showcase-product">{featured?.name}</h3>
+            </div>
             <ol className="showcase-steps">
               {steps.map((step, i) => (
                 <li
-                  className={i <= active ? 'is-active' : ''}
                   key={step.id}
+                  className={i === active ? 'is-active' : i < active ? 'is-done' : ''}
                 >
-                  <span className="step-label">{step.label}</span>
-                  <p className="step-detail">{step.detail}</p>
+                  <span className="step-index" aria-hidden="true">
+                    {pad(i + 1)}
+                  </span>
+                  <div className="step-body">
+                    <span className="step-label">{step.label}</span>
+                    <p className="step-detail">{step.detail}</p>
+                  </div>
+                  <span className="step-state" aria-hidden="true" />
                 </li>
               ))}
             </ol>

@@ -7,7 +7,6 @@ const O = `${import.meta.env.BASE_URL}models3D/optimized/`
  * Los nombres de archivo originales viven en CONTENT.md / public/models3D.
  */
 export const model = {
-  /** BRAZO_AUMENTADO_V4 — brazo canónico (hero ida, showcase, card catálogo). */
   armV4: `${O}l-x3-b_bionic_arm.glb`,
   /** UNIDAD_OCULAR_V9. */
   ocularV9: `${O}eye_implant.glb`,

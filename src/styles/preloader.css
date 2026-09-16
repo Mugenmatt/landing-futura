@@ -1,0 +1,461 @@
+/* ============================================================
+   PRELOADER — BOOT SEQUENCE CYBERPUNK
+   5s. CSS puro + useEffect para el timer. Sin dependencias.
+   ============================================================ */
+
+.preloader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--bg-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: opacity 0.5s ease-out, visibility 0s 0.5s;
+}
+
+.preloader-exit {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* --- Grid blueprint --- */
+.preloader-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: preloader-grid-drift 20s linear infinite;
+}
+
+@keyframes preloader-grid-drift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(40px, 40px); }
+}
+
+/* --- Scanlines --- */
+.preloader-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 255, 0.015) 2px,
+    rgba(0, 255, 255, 0.015) 4px
+  );
+  animation: preloader-scanlines-flicker 8s linear infinite;
+}
+
+@keyframes preloader-scanlines-flicker {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.7; }
+  92% { opacity: 0.5; }
+  93% { opacity: 0.1; }
+  94% { opacity: 0.8; }
+  95% { opacity: 0.2; }
+}
+
+/* --- Single sweep line --- */
+.preloader-scanline-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 45%,
+    rgba(0, 255, 255, 0.06) 49.5%,
+    rgba(0, 255, 255, 0.12) 50%,
+    rgba(0, 255, 255, 0.06) 50.5%,
+    transparent 55%,
+    transparent 100%
+  );
+  animation: preloader-sweep 3s linear infinite;
+}
+
+@keyframes preloader-sweep {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* --- Data streams --- */
+.preloader-data {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 90px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--cyber-blue);
+  opacity: 0.15;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow: hidden;
+  animation: preloader-data-scroll 8s linear infinite;
+}
+
+.preloader-data-left {
+  left: 20px;
+}
+
+.preloader-data-right {
+  right: 20px;
+  animation-delay: -4s;
+  animation-direction: reverse;
+}
+
+@keyframes preloader-data-scroll {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+/* --- Center content --- */
+.preloader-center {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  width: min(90vw, 600px);
+}
+
+/* --- Logo with glitch --- */
+.preloader-logo-wrapper {
+  position: relative;
+}
+
+.preloader-logo {
+  font-family: var(--font-ui);
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--cyber-blue);
+  text-shadow:
+    0 0 10px rgba(0, 255, 255, 0.7),
+    0 0 30px rgba(0, 255, 255, 0.3),
+    0 0 60px rgba(0, 255, 255, 0.1);
+  animation: preloader-neon-pulse 2s ease-in-out infinite,
+             preloader-glitch 4s infinite;
+  position: relative;
+}
+
+.preloader-logo-shadow {
+  position: absolute;
+  inset: 0;
+  color: var(--neon-pink);
+  opacity: 0;
+  animation: preloader-glitch-shadow 4s infinite;
+  text-shadow:
+    0 0 10px rgba(255, 0, 127, 0.7),
+    0 0 30px rgba(255, 0, 127, 0.3);
+}
+
+@keyframes preloader-neon-pulse {
+  0%, 100% {
+    text-shadow:
+      0 0 10px rgba(0, 255, 255, 0.7),
+      0 0 30px rgba(0, 255, 255, 0.3),
+      0 0 60px rgba(0, 255, 255, 0.1);
+    opacity: 1;
+  }
+  50% {
+    text-shadow:
+      0 0 20px rgba(0, 255, 255, 0.9),
+      0 0 50px rgba(0, 255, 255, 0.5),
+      0 0 80px rgba(0, 255, 255, 0.2);
+    opacity: 0.95;
+  }
+  96% { opacity: 1; }
+  97% { opacity: 0.6; }
+  98% { opacity: 1; }
+  99% { opacity: 0.5; }
+}
+
+@keyframes preloader-glitch {
+  0%, 89% { transform: translate(0, 0); }
+  90% { transform: translate(-2px, 1px); }
+  91% { transform: translate(3px, -1px); }
+  92% { transform: translate(-1px, 2px); }
+  93% { transform: translate(2px, 0); }
+  94% { transform: translate(-3px, -1px); }
+  95% { transform: translate(0, 2px); }
+  96% { transform: translate(1px, -2px); }
+  97% { transform: translate(-2px, 1px); }
+  98%, 100% { transform: translate(0, 0); }
+}
+
+@keyframes preloader-glitch-shadow {
+  0%, 89% { opacity: 0; transform: translate(0, 0); }
+  90% { opacity: 0.8; transform: translate(4px, -1px); }
+  91% { opacity: 0; transform: translate(-3px, 2px); }
+  92% { opacity: 0.6; transform: translate(2px, 0); }
+  93% { opacity: 0; }
+  94% { opacity: 0.9; transform: translate(-5px, 1px); }
+  95% { opacity: 0; }
+  96% { opacity: 0.7; transform: translate(3px, -2px); }
+  97% { opacity: 0; }
+  98%, 100% { opacity: 0; transform: translate(0, 0); }
+}
+
+/* --- Subtitle --- */
+.preloader-subtitle {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  animation: preloader-subtitle-flicker 6s infinite;
+}
+
+@keyframes preloader-subtitle-flicker {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.9; }
+  72% { opacity: 0.7; }
+  73% { opacity: 0.3; }
+  74% { opacity: 0.8; }
+  75% { opacity: 0.4; }
+  76% { opacity: 0.7; }
+}
+
+/* --- Progress bar --- */
+.preloader-progress-container {
+  width: 100%;
+  height: 2px;
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.preloader-progress {
+  height: 100%;
+  width: 100%;
+  background: var(--cyber-blue);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.6), 0 0 20px rgba(0, 255, 255, 0.2);
+  transform-origin: left;
+  position: relative;
+}
+
+.preloader-progress::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  background: var(--cyber-blue);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.8), 0 0 24px rgba(0, 255, 255, 0.4);
+  animation: preloader-bar-glow 0.8s ease-in-out infinite;
+}
+
+@keyframes preloader-bar-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* --- Percentage --- */
+.preloader-percentage {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--cyber-blue);
+  opacity: 0.8;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+}
+
+/* --- Boot line --- */
+.preloader-boot-line {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--electric-green);
+  opacity: 0.6;
+  min-height: 1.2em;
+  text-shadow: 0 0 6px rgba(0, 255, 65, 0.3);
+  letter-spacing: 0.05em;
+  animation: preloader-boot-fade 0.42s ease-in-out;
+}
+
+@keyframes preloader-boot-fade {
+  0% { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 0.6; transform: translateY(0); }
+}
+
+/* --- Glitch slices --- */
+.preloader-glitch-slice {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--cyber-blue);
+  opacity: 0;
+  z-index: 5;
+  pointer-events: none;
+  white-space: nowrap;
+  animation: preloader-glitch-flash 4s infinite;
+}
+
+.preloader-glitch-slice-1 {
+  top: 18%;
+  left: 15%;
+  animation-delay: 0.5s;
+}
+
+.preloader-glitch-slice-2 {
+  bottom: 22%;
+  right: 10%;
+  color: var(--neon-pink);
+  animation-delay: 1.5s;
+}
+
+.preloader-glitch-slice-3 {
+  top: 65%;
+  left: 60%;
+  animation-delay: 2.8s;
+}
+
+@keyframes preloader-glitch-flash {
+  0%, 89% { opacity: 0; transform: translate(0, 0) scaleX(1); clip-path: inset(0); }
+  90% { opacity: 0.6; transform: translate(-3px, 0) scaleX(1.02); clip-path: inset(10% 0 60% 0); }
+  91% { opacity: 0; }
+  92% { opacity: 0.8; transform: translate(4px, 0) scaleX(0.98); clip-path: inset(40% 0 20% 0); }
+  93% { opacity: 0; }
+  94% { opacity: 0.5; transform: translate(-2px, 0) scaleX(1.01); clip-path: inset(70% 0 5% 0); }
+  95% { opacity: 0; }
+  96%, 100% { opacity: 0; transform: translate(0, 0) scaleX(1); clip-path: inset(0); }
+}
+
+/* --- Corner brackets --- */
+.preloader-corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-color: rgba(0, 255, 255, 0.3);
+  border-style: solid;
+  border-width: 0;
+}
+
+.preloader-corner-tl {
+  top: 40px;
+  left: 40px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+}
+
+.preloader-corner-tr {
+  top: 40px;
+  right: 40px;
+  border-top-width: 2px;
+  border-right-width: 2px;
+}
+
+.preloader-corner-bl {
+  bottom: 40px;
+  left: 40px;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+}
+
+.preloader-corner-br {
+  bottom: 40px;
+  right: 40px;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+}
+
+/* --- Scan sweep overlay (single horizontal line) --- */
+.preloader-scanline-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 45%,
+    rgba(0, 255, 255, 0.06) 49.5%,
+    rgba(0, 255, 255, 0.12) 50%,
+    rgba(0, 255, 255, 0.06) 50.5%,
+    transparent 55%,
+    transparent 100%
+  );
+  animation: preloader-sweep 3s linear infinite;
+}
+
+@keyframes preloader-sweep {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* --- Responsive --- */
+@media (max-width: 640px) {
+  .preloader-data {
+    display: none;
+  }
+
+  .preloader-corner {
+    width: 24px;
+    height: 24px;
+  }
+
+  .preloader-corner-tl,
+  .preloader-corner-bl {
+    left: 16px;
+  }
+
+  .preloader-corner-tr,
+  .preloader-corner-br {
+    right: 16px;
+  }
+
+  .preloader-corner-tl,
+  .preloader-corner-tr {
+    top: 16px;
+  }
+
+  .preloader-corner-bl,
+  .preloader-corner-br {
+    bottom: 16px;
+  }
+
+  .preloader-glitch-slice {
+    display: none;
+  }
+}
+
+/* --- reduced-motion: sin animaciones, solo contenido estático --- */
+@media (prefers-reduced-motion: reduce) {
+  .preloader-overlay {
+    animation: none !important;
+  }
+
+  .preloader-grid,
+  .preloader-scanlines,
+  .preloader-scanline-sweep,
+  .preloader-data,
+  .preloader-logo,
+  .preloader-logo-shadow,
+  .preloader-subtitle,
+  .preloader-progress,
+  .preloader-boot-line,
+  .preloader-glitch-slice {
+    animation: none !important;
+  }
+
+  .preloader-logo {
+    opacity: 0.9;
+    text-shadow:
+      0 0 10px rgba(0, 255, 255, 0.5),
+      0 0 20px rgba(0, 255, 255, 0.2);
+  }
+
+  .preloader-boot-line {
+    opacity: 0.6;
+  }
+
+  .preloader-scanlines {
+    opacity: 0.3;
+  }
+}

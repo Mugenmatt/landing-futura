@@ -1,4 +1,5 @@
 import { useSmoothAnchors } from './hooks/useSmoothAnchors'
+import Preloader from './components/ui/Preloader'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 import Hero from './components/sections/Hero'
@@ -14,6 +15,7 @@ function App() {
   useSmoothAnchors()
   return (
     <>
+      <Preloader />
       <a className="skip-link" href="#main">
         Saltar al contenido
       </a>
