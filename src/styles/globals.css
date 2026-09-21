@@ -30,6 +30,34 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Fondo atmosférico: auras neón ambientales + viñeta — matan la llanura del negro puro
+   sin competir con paneles. Todo estático, sin animación. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    /* aura cyan — hero / zona superior izquierda */
+    radial-gradient(ellipse 52% 40% at 18% 22%, rgba(0, 255, 255, 0.06), transparent 55%),
+    /* aura violeta — zona inferior derecha */
+    radial-gradient(ellipse 48% 42% at 74% 78%, rgba(148, 0, 211, 0.05), transparent 52%),
+    /* viñeta suave: solo pega en los bordes extremos */
+    radial-gradient(ellipse 150% 130% at 50% 50%, transparent 46%, var(--bg-base));
+}
+
+/* Grano analógico sutil (noise no animado) — textura HUD/terminal, opacidad ínfima. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 h1,
 h2,
 h3,

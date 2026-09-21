@@ -66,6 +66,8 @@ Reglas que se mantienen de la evaluación previa:
 
 ## Animaciones (no-3D)
 
+- **CyberBackdrop (2026-09)**: el fondo ambiente animado es un **único canvas 2D fijo** (`z-index: -1`, `pointer-events: none`, `aria-hidden`) montado como primer hijo de `App`. Justificación de la decisión técnica (regla dura del repo, CSS/SVG/Canvas nativo primero): docenas de glifos de data rain + partículas + glifos HUD en movimiento simultáneo serían cientos de nodos DOM/SVG churn-eando layout; un solo canvas los dibuja en una superficie a 60fps. No es three.js (2D plano, sin profundidad) y no introduce dependencias. Estrategia de rendimiento: un solo `requestAnimationFrame` con delta-time (dt clamp 0.1 s), `devicePixelRatio` capado a 2, pausa con `document.hidden`, densidades por `pointer: coarse` (menos columnas/partículas, sin scan sweep ni glitch), glitch programado cada 9–20 s. `prefers-reduced-motion` → dibuja UN frame estático y no arranca el loop. Ver `DESIGN.md` para el régimen de acentos y capas del fondo.
+
 - CSS `@keyframes` + `transform`/`opacity` para la mayoría de reveals.
 - `IntersectionObserver` (vía hook `useInViewport`) para disparar reveals y el conteo de números de Ingeniería — sin librerías de scroll externas si no hace falta.
 - Product Showcase (scroll-linked): usar `IntersectionObserver` + progreso simple calculado en scroll, no una librería de scroll-jacking completa, salvo que la interacción lo requiera y se mida que no cuesta FPS.

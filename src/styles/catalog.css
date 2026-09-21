@@ -86,6 +86,7 @@
 }
 
 .cat-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -311,6 +312,7 @@
 }
 
 .panel {
+  position: relative;
   padding: 1.25rem;
   border: 1px solid var(--border-glow-dim);
   border-radius: var(--radius-sm);
@@ -318,6 +320,39 @@
   display: grid;
   gap: 1.5rem;
   align-content: start;
+}
+
+/* HUD corner brackets — esquina dashboard en paneles y cards */
+.panel::before,
+.cat-card::before,
+.side-panel::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: var(--radius-sm);
+  background:
+    /* top-left */
+    linear-gradient(var(--cyber-blue), var(--cyber-blue)) 0 0 / 12px 1px no-repeat,
+    linear-gradient(var(--cyber-blue), var(--cyber-blue)) 0 0 / 1px 12px no-repeat,
+    /* top-right */
+    linear-gradient(var(--cyber-blue), var(--cyber-blue)) 100% 0 / 12px 1px no-repeat,
+    linear-gradient(var(--cyber-blue), var(--cyber-blue)) 100% 0 / 1px 12px no-repeat,
+    /* bottom-left */
+    linear-gradient(var(--cyber-blue), var(--cyber-blue)) 0 100% / 12px 1px no-repeat,
+    linear-gradient(var(--cyber-blue), var(--cyber-blue)) 0 100% / 1px 12px no-repeat,
+    /* bottom-right */
+    linear-gradient(var(--cyber-blue), var(--cyber-blue)) 100% 100% / 12px 1px no-repeat,
+    linear-gradient(var(--cyber-blue), var(--cyber-blue)) 100% 100% / 1px 12px no-repeat;
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
+}
+
+.panel:hover::before,
+.cat-card:hover::before,
+.side-panel:hover::before {
+  opacity: 0.65;
 }
 
 .panel-title {
@@ -547,6 +582,7 @@
 }
 
 .side-panel {
+  position: relative;
   padding: 1.25rem;
   border: 1px solid var(--border-glow-dim);
   border-radius: var(--radius-sm);
